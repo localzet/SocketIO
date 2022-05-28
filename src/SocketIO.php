@@ -38,14 +38,14 @@ class SocketIO
             class_alias('localzet\SocketIO\Engine\Protocols\SocketIO', 'Protocols\SocketIO');
         }
         if ($port) {
-            $worker = new Worker('SocketIO://0.0.0.0:' . $port, $opts);
-            $worker->name = 'SocketIO';
+            $core = new Server('SocketIO://0.0.0.0:' . $port, $opts);
+            $core->name = 'SocketIO';
 
             if (isset($opts['ssl'])) {
-                $worker->transport = 'ssl';
+                $core->transport = 'ssl';
             }
 
-            $this->attach($worker);
+            $this->attach($core);
         }
     }
 
@@ -89,7 +89,7 @@ class SocketIO
         $this->eio = $engine->attach($srv, $opts);
 
         // Export http server
-        $this->worker = $srv;
+        $this->core = $srv;
 
         // bind to engine events
         $this->bind($engine);
@@ -131,10 +131,10 @@ class SocketIO
     {
         $args = array_pad(func_get_args(), 2, null);
 
-        if ($args[0] === 'workerStart') {
-            $this->worker->onWorkerStart = $args[1];
-        } else if ($args[0] === 'workerStop') {
-            $this->worker->onWorkerStop = $args[1];
+        if ($args[0] === 'serverStart') {
+            $this->core->onServerStart = $args[1];
+        } else if ($args[0] === 'serverStop') {
+            $this->core->onServerStop = $args[1];
         } else if ($args[0] !== null) {
             return call_user_func_array(array($this->sockets, 'on'), $args);
         }

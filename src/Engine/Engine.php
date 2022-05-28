@@ -231,10 +231,10 @@ class Engine extends Emitter
         unset($this->clients[$id]);
     }
 
-    public function attach($worker)
+    public function attach($core)
     {
-        $this->server = $worker;
-        $worker->onConnect = array($this, 'onConnect'); 
+        $this->server = $core;
+        $core->onConnect = array($this, 'onConnect'); 
     }
     
     public function onConnect($connection)
