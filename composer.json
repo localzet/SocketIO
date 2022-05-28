@@ -1,6 +1,5 @@
 {
     "name": "localzet/socket",
-    "version": "v1.0.0",
     "description": "PHP SocketIO Library",
     "type": "library",
     "keywords": [
@@ -20,12 +19,13 @@
     },
     "require": {
         "php": ">=8.1",
-        "localzet/core": ">=1.0.0",
-        "localzet/channel": ">=1.0.0"
+        "localzet/core": "dev-main",
+        "localzet/channel": "dev-main"
     },
     "autoload": {
         "psr-4": {
             "localzet\\SocketIO\\": "./src"
         }
-    }
+    },
+    "minimum-stability": "dev"
 }
