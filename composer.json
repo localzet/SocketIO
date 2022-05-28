@@ -26,6 +26,5 @@
         "psr-4": {
             "localzet\\SocketIO\\": "./src"
         }
-    },
-    "minimum-stability": "dev"
+    }
 }
