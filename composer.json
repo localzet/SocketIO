@@ -27,5 +27,5 @@
             "localzet\\SocketIO\\": "./src"
         }
     },
-    "minimum-stability": "stable"
+    "minimum-stability": "dev"
 }
