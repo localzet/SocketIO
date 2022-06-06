@@ -18,7 +18,7 @@
         "email": "creator@localzet.ru"
     },
     "require": {
-        "php": ">=8.1",
+        "php": ">=7.4",
         "localzet/core": ">=v1.0.0",
         "localzet/channel": ">=v1.0.0"
     },
