@@ -1,13 +1,29 @@
 <?php
+
+/**
+ * @version     1.0.0-dev
+ * @package     SocketIO Engine
+ * @link        https://localzet.gitbook.io
+ * 
+ * @author      localzet <creator@localzet.ru>
+ * 
+ * @copyright   Copyright (c) 2018-2020 Zorin Projects 
+ * @copyright   Copyright (c) 2020-2022 NONA Team
+ * 
+ * @license     https://www.localzet.ru/license GNU GPLv3 License
+ */
+
 namespace localzet\SocketIO\Engine;
+
 use \localzet\SocketIO\Event\Emitter;
 use \localzet\SocketIO\Debug;
+
 class Transport extends Emitter
 {
     public $readyState = 'opening';
     public $req = null;
     public $res = null;
-    
+
     public function __construct()
     {
         Debug::debug('Transport __construct no access !!!!');
@@ -20,14 +36,13 @@ class Transport extends Emitter
 
     public function noop()
     {
- 
-    } 
+    }
 
     public function onRequest($req)
     {
         $this->req = $req;
     }
-    
+
     public function close($fn = null)
     {
         $this->readyState = 'closing';
@@ -37,17 +52,14 @@ class Transport extends Emitter
 
     public function onError($msg, $desc = '')
     {
-        if ($this->listeners('error')) 
-        {
+        if ($this->listeners('error')) {
             $err = array(
                 'type' => 'TransportError',
                 'description' => $desc,
             );
             $this->emit('error', $err);
-        } 
-        else 
-        {
-            echo("ignored transport error $msg $desc\n");
+        } else {
+            echo ("ignored transport error $msg $desc\n");
         }
     }
 
@@ -60,8 +72,8 @@ class Transport extends Emitter
     {
         $this->onPacket(Parser::decodePacket($data));
     }
-    
-    public function onClose() 
+
+    public function onClose()
     {
         $this->req = $this->res = null;
         $this->readyState = 'closed';
@@ -71,9 +83,9 @@ class Transport extends Emitter
 
     public function destroy()
     {
-         $this->req = $this->res = null;
-         $this->readyState = 'closed';
-         $this->removeAllListeners();
-         $this->shouldClose = null;
+        $this->req = $this->res = null;
+        $this->readyState = 'closed';
+        $this->removeAllListeners();
+        $this->shouldClose = null;
     }
 }

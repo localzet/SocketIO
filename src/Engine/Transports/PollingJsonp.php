@@ -1,6 +1,22 @@
 <?php
+
+/**
+ * @version     1.0.0-dev
+ * @package     SocketIO Engine
+ * @link        https://localzet.gitbook.io
+ * 
+ * @author      localzet <creator@localzet.ru>
+ * 
+ * @copyright   Copyright (c) 2018-2020 Zorin Projects 
+ * @copyright   Copyright (c) 2020-2022 NONA Team
+ * 
+ * @license     https://www.localzet.ru/license GNU GPLv3 License
+ */
+
 namespace localzet\SocketIO\Engine\Transports;
+
 use \localzet\SocketIO\Debug;
+
 class PollingJsonp extends Polling
 {
     public $head = null;
@@ -12,10 +28,10 @@ class PollingJsonp extends Polling
         $this->head = "___eio[ $j ](";
         Debug::debug('PollingJsonp __construct');
     }
-public function __destruct()
-{
-    Debug::debug('PollingJsonp __destruct');
-}
+    public function __destruct()
+    {
+        Debug::debug('PollingJsonp __destruct');
+    }
     public function onData($data)
     {
         $parsed_data = null;
@@ -40,24 +56,24 @@ public function __destruct()
 
         // explicit UTF-8 is required for pages not served under utf
         $headers = array(
-            'Content-Type'=> 'text/javascript; charset=UTF-8',
-            'Content-Length'=> strlen($data),
-            'X-XSS-Protection'=>'0'
+            'Content-Type' => 'text/javascript; charset=UTF-8',
+            'Content-Length' => strlen($data),
+            'X-XSS-Protection' => '0'
         );
-        if(empty($this->res)){echo new \Exception('empty $this->res');return;}
-        $this->res->writeHead(200, '',$this->headers($this->req, $headers));
+        if (empty($this->res)) {
+            echo new \Exception('empty $this->res');
+            return;
+        }
+        $this->res->writeHead(200, '', $this->headers($this->req, $headers));
         $this->res->end($data);
     }
-    
+
     public function headers($req, $headers = array())
     {
-       $listeners = $this->listeners('headers');
-       foreach($listeners as $listener)
-       {
-           $listener($headers);
-       }
-       return $headers;
+        $listeners = $this->listeners('headers');
+        foreach ($listeners as $listener) {
+            $listener($headers);
+        }
+        return $headers;
     }
- 
-
 }

@@ -1,5 +1,20 @@
 <?php
+
+/**
+ * @version     1.0.0-dev
+ * @package     SocketIO Engine
+ * @link        https://localzet.gitbook.io
+ * 
+ * @author      localzet <creator@localzet.ru>
+ * 
+ * @copyright   Copyright (c) 2018-2020 Zorin Projects 
+ * @copyright   Copyright (c) 2020-2022 NONA Team
+ * 
+ * @license     https://www.localzet.ru/license GNU GPLv3 License
+ */
+
 namespace localzet\SocketIO;
+
 class DefaultAdapter
 {
 
@@ -9,28 +24,27 @@ class DefaultAdapter
     public $encoder = null;
     public function __construct($nsp)
     {
-         $this->nsp = $nsp;
-         $this->encoder = new Parser\Encoder();
-         Debug::debug('DefaultAdapter __construct');
+        $this->nsp = $nsp;
+        $this->encoder = new Parser\Encoder();
+        Debug::debug('DefaultAdapter __construct');
     }
-    
+
     public function __destruct()
     {
         Debug::debug('DefaultAdapter __destruct');
     }
-    
+
     public function add($id, $room)
     {
         $this->sids[$id][$room] = true;
         $this->rooms[$room][$id] = true;
     }
-     
+
     public function del($id, $room)
     {
         unset($this->sids[$id][$room]);
         unset($this->rooms[$room][$id]);
-        if(empty($this->rooms[$room]))
-        {
+        if (empty($this->rooms[$room])) {
             unset($this->rooms[$room]);
         }
     }
@@ -38,8 +52,7 @@ class DefaultAdapter
     public function delAll($id)
     {
         $rooms = array_keys(isset($this->sids[$id]) ? $this->sids[$id] : array());
-        foreach($rooms as $room)
-        {
+        foreach ($rooms as $room) {
             $this->del($id, $room);
         }
         unset($this->sids[$id]);
@@ -57,50 +70,42 @@ class DefaultAdapter
         );
         $packet['nsp'] = $this->nsp->name;
         $encodedPackets = $this->encoder->encode($packet);
-        if($rooms) 
-        {
-             $ids = array();
-             foreach($rooms as $i=>$room) 
-             {
-                 if(!isset($this->rooms[$room]))
-                 {
-                     continue;
-                 }
-                   
-                 $room = $this->rooms[$room];
-                 foreach($room as $id=>$item)
-                 {
-                    if(isset($ids[$id]) || isset($except[$id]))
-                    {
-                         continue;
+        if ($rooms) {
+            $ids = array();
+            foreach ($rooms as $i => $room) {
+                if (!isset($this->rooms[$room])) {
+                    continue;
+                }
+
+                $room = $this->rooms[$room];
+                foreach ($room as $id => $item) {
+                    if (isset($ids[$id]) || isset($except[$id])) {
+                        continue;
                     }
-                    if(isset($this->nsp->connected[$id]))
-                    {
-                         $ids[$id] = true;
-                         $this->nsp->connected[$id]->packet($encodedPackets, $packetOpts);
-                     }
-                 }
-             }
-         } else {
-             foreach($this->sids as $id=>$sid)
-             {
-                  if(isset($except[$id])) continue;
-                  if(isset($this->nsp->connected[$id]))
-                  {
-                      $socket = $this->nsp->connected[$id];
-                      $volatile = isset($flags['volatile']) ? $flags['volatile'] : null;
-                      $socket->packet($encodedPackets, true, $volatile);
-                  }
-              }
-         }
+                    if (isset($this->nsp->connected[$id])) {
+                        $ids[$id] = true;
+                        $this->nsp->connected[$id]->packet($encodedPackets, $packetOpts);
+                    }
+                }
+            }
+        } else {
+            foreach ($this->sids as $id => $sid) {
+                if (isset($except[$id])) continue;
+                if (isset($this->nsp->connected[$id])) {
+                    $socket = $this->nsp->connected[$id];
+                    $volatile = isset($flags['volatile']) ? $flags['volatile'] : null;
+                    $socket->packet($encodedPackets, true, $volatile);
+                }
+            }
+        }
     }
-    
-    public function clients($rooms, $fn) {
+
+    public function clients($rooms, $fn)
+    {
         $sids = array();
         foreach ($rooms as $room) {
             $sids = array_merge($sids, $this->rooms[$room]);
         }
         $fn();
     }
-
 }

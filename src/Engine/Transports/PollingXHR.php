@@ -1,6 +1,22 @@
 <?php
+
+/**
+ * @version     1.0.0-dev
+ * @package     SocketIO Engine
+ * @link        https://localzet.gitbook.io
+ * 
+ * @author      localzet <creator@localzet.ru>
+ * 
+ * @copyright   Copyright (c) 2018-2020 Zorin Projects 
+ * @copyright   Copyright (c) 2020-2022 NONA Team
+ * 
+ * @license     https://www.localzet.ru/license GNU GPLv3 License
+ */
+
 namespace localzet\SocketIO\Engine\Transports;
+
 use \localzet\SocketIO\Debug;
+
 class PollingXHR extends Polling
 {
     public function __construct()
@@ -15,16 +31,13 @@ class PollingXHR extends Polling
 
     public function onRequest($req)
     {
-        if('OPTIONS' === $req->method)
-        {
+        if ('OPTIONS' === $req->method) {
             $res = $req->res;
             $headers = $this->headers($req);
             $headers['Access-Control-Allow-Headers'] = 'Content-Type';
             $res->writeHead(200, '', $headers);
             $res->end();
-        } 
-        else
-        {
+        } else {
             parent::onRequest($req);
         }
     }
@@ -37,34 +50,31 @@ class PollingXHR extends Polling
         //    : 'application/octet-stream';
         $content_type = preg_match('/^\d+:/', $data) ? 'text/plain; charset=UTF-8' : 'application/octet-stream';
         $content_length = strlen($data);
-        $headers = array( 
-            'Content-Type'=> $content_type,
-            'Content-Length'=> $content_length,
+        $headers = array(
+            'Content-Type' => $content_type,
+            'Content-Length' => $content_length,
             'X-XSS-Protection' => '0',
         );
-        if(empty($this->res)){echo new \Exception('empty this->res');return;}
+        if (empty($this->res)) {
+            echo new \Exception('empty this->res');
+            return;
+        }
         $this->res->writeHead(200, '', $this->headers($this->req, $headers));
         $this->res->end($data);
     }
-    
+
     public function headers($req, $headers = array())
     {
-       if(isset($req->headers['origin']))
-       {
-           $headers['Access-Control-Allow-Credentials'] = 'true';
-           $headers['Access-Control-Allow-Origin'] = $req->headers['origin'];
-       } 
-       else
-       {
-           $headers['Access-Control-Allow-Origin'] = '*';
-       }
-       $listeners = $this->listeners('headers');
-       foreach($listeners as $listener)
-       {
-           $listener($headers);
-       }
-       return $headers;
+        if (isset($req->headers['origin'])) {
+            $headers['Access-Control-Allow-Credentials'] = 'true';
+            $headers['Access-Control-Allow-Origin'] = $req->headers['origin'];
+        } else {
+            $headers['Access-Control-Allow-Origin'] = '*';
+        }
+        $listeners = $this->listeners('headers');
+        foreach ($listeners as $listener) {
+            $listener($headers);
+        }
+        return $headers;
     }
- 
-
 }

@@ -1,8 +1,24 @@
 <?php
+
+/**
+ * @version     1.0.0-dev
+ * @package     SocketIO Engine
+ * @link        https://localzet.gitbook.io
+ * 
+ * @author      localzet <creator@localzet.ru>
+ * 
+ * @copyright   Copyright (c) 2018-2020 Zorin Projects 
+ * @copyright   Copyright (c) 2020-2022 NONA Team
+ * 
+ * @license     https://www.localzet.ru/license GNU GPLv3 License
+ */
+
 namespace localzet\SocketIO\Engine\Transports;
+
 use \localzet\SocketIO\Engine\Transport;
 use \localzet\SocketIO\Engine\Parser;
 use \localzet\SocketIO\Debug;
+
 class WebSocket extends Transport
 {
     public $writable = true;
@@ -21,20 +37,19 @@ class WebSocket extends Transport
     {
         Debug::debug('WebSocket __destruct');
     }
-    public function onData2($connection, $data) 
+    public function onData2($connection, $data)
     {
         call_user_func(array($this, 'parent::onData'), $data);
     }
-    
+
     public function onError2($conection, $code, $msg)
     {
         call_user_func(array($this, 'parent::onClose'), $code, $msg);
     }
-    
+
     public function send($packets)
     {
-        foreach($packets as $packet)
-        {
+        foreach ($packets as $packet) {
             $data = Parser::encodePacket($packet, $this->supportsBinary);
             if ($this->socket) {
                 $this->socket->send($data);
@@ -42,15 +57,13 @@ class WebSocket extends Transport
             }
         }
     }
-    
-    public function doClose($fn = null) 
+
+    public function doClose($fn = null)
     {
-        if($this->socket)
-        {
+        if ($this->socket) {
             $this->socket->close();
             $this->socket = null;
-            if(!empty($fn))
-            {
+            if (!empty($fn)) {
                 call_user_func($fn);
             }
         }

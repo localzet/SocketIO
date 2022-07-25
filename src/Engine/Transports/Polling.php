@@ -1,8 +1,24 @@
 <?php
+
+/**
+ * @version     1.0.0-dev
+ * @package     SocketIO Engine
+ * @link        https://localzet.gitbook.io
+ * 
+ * @author      localzet <creator@localzet.ru>
+ * 
+ * @copyright   Copyright (c) 2018-2020 Zorin Projects 
+ * @copyright   Copyright (c) 2020-2022 NONA Team
+ * 
+ * @license     https://www.localzet.ru/license GNU GPLv3 License
+ */
+
 namespace localzet\SocketIO\Engine\Transports;
+
 use localzet\SocketIO\Engine\Transport;
 use localzet\SocketIO\Engine\Parser;
 use \localzet\SocketIO\Debug;
+
 class Polling extends Transport
 {
     public $name = 'polling';
@@ -13,25 +29,19 @@ class Polling extends Transport
     {
         $res = $req->res;
 
-        if ('GET' === $req->method) 
-        {
+        if ('GET' === $req->method) {
             $this->onPollRequest($req, $res);
-        } 
-        else if('POST' === $req->method) 
-        {
+        } else if ('POST' === $req->method) {
             $this->onDataRequest($req, $res);
-        } 
-        else 
-        {
+        } else {
             $res->writeHead(500);
             $res->end();
         }
     }
 
-    public function onPollRequest($req, $res) 
+    public function onPollRequest($req, $res)
     {
-        if($this->req) 
-        {
+        if ($this->req) {
             echo ('request overlap');
             // assert: this.res, '.req and .res should be (un)set together'
             $this->onError('overlap from client');
@@ -50,10 +60,9 @@ class Polling extends Transport
         $this->emit('drain');
 
         // if we're still writable but had a pending close, trigger an empty send
-        if ($this->writable && $this->shouldClose) 
-        {
-            echo('triggering empty send to append close packet');
-            $this->send(array(array('type'=>'noop')));
+        if ($this->writable && $this->shouldClose) {
+            echo ('triggering empty send to append close packet');
+            $this->send(array(array('type' => 'noop')));
         }
     }
 
@@ -62,21 +71,19 @@ class Polling extends Transport
         $this->onError('poll connection closed prematurely');
         $this->pollRequestClean();
     }
-    
+
     public function pollRequestClean()
     {
-        if(isset($this->req))
-        {
+        if (isset($this->req)) {
             $this->req->res = null;
             $this->req->onClose = $this->req->cleanup = null;
             $this->req = $this->res = null;
         }
     }
 
-    public function onDataRequest($req, $res) 
+    public function onDataRequest($req, $res)
     {
-        if(isset($this->dataReq)) 
-        {
+        if (isset($this->dataReq)) {
             // assert: this.dataRes, '.dataReq and .dataRes should be (un)set together'
             $this->onError('data request overlap from client');
             $res->writeHead(500);
@@ -115,60 +122,53 @@ class Polling extends Transport
         }*/
     }
 
-    public function dataRequestOnEnd () 
+    public function dataRequestOnEnd()
     {
         $this->onData($this->chunks);
 
         $headers = array(
-           'Content-Type'=> 'text/html',
-           'Content-Length'=> 2,
-           'X-XSS-Protection' => '0',
+            'Content-Type' => 'text/html',
+            'Content-Length' => 2,
+            'X-XSS-Protection' => '0',
         );
 
         $this->dataRes->writeHead(200, '', $this->headers($this->dataReq, $headers));
         $this->dataRes->end('ok');
         $this->dataRequestCleanup();
     }
-    
+
     public function onData($data)
     {
-       $packets = Parser::decodePayload($data);
-       if(isset($packets['type']))
-       {
-           if('close' === $packets['type'])
-           {
-               $this->onClose();
-               return false;
-           }
-           else
-           {
-               $packets = array($packets);
-           }
-       }
-       
-       foreach($packets as $packet)
-       {
-           $this->onPacket($packet);
-       }
-    }
-    
-    public function onClose()
-    {
-       if($this->writable) 
-       {
-           // close pending poll request
-           $this->send(array(array('type'=> 'noop')));
-       }
-       parent::onClose();
+        $packets = Parser::decodePayload($data);
+        if (isset($packets['type'])) {
+            if ('close' === $packets['type']) {
+                $this->onClose();
+                return false;
+            } else {
+                $packets = array($packets);
+            }
+        }
+
+        foreach ($packets as $packet) {
+            $this->onPacket($packet);
+        }
     }
 
-    public function send($packets) 
-    {   
+    public function onClose()
+    {
+        if ($this->writable) {
+            // close pending poll request
+            $this->send(array(array('type' => 'noop')));
+        }
+        parent::onClose();
+    }
+
+    public function send($packets)
+    {
         $this->writable = false;
-        if($this->shouldClose) 
-        {
-            echo('appending close packet to payload');
-            $packets[] = array('type'=>'close');
+        if ($this->shouldClose) {
+            echo ('appending close packet to payload');
+            $packets[] = array('type' => 'close');
             call_user_func($this->shouldClose);
             $this->shouldClose = null;
         }
@@ -176,33 +176,28 @@ class Polling extends Transport
         $this->write($data);
     }
 
-    public function write($data) 
+    public function write($data)
     {
         $this->doWrite($data);
-        if(!empty($this->req->cleanup))
-        {
+        if (!empty($this->req->cleanup)) {
             call_user_func($this->req->cleanup);
         }
     }
 
-    public function doClose($fn) 
+    public function doClose($fn)
     {
-       if(!empty($this->dataReq)) 
-       {
-           //echo('aborting ongoing data request');
-           $this->dataReq->destroy();
-       }
+        if (!empty($this->dataReq)) {
+            //echo('aborting ongoing data request');
+            $this->dataReq->destroy();
+        }
 
-       if($this->writable)
-       {
-           //echo('transport writable - closing right away');
-           $this->send(array(array('type'=> 'close')));
-           call_user_func($fn);
-       }
-       else
-       {
-           //echo("transport not writable - buffering orderly close\n");
-           $this->shouldClose = $fn;
-       }
+        if ($this->writable) {
+            //echo('transport writable - closing right away');
+            $this->send(array(array('type' => 'close')));
+            call_user_func($fn);
+        } else {
+            //echo("transport not writable - buffering orderly close\n");
+            $this->shouldClose = $fn;
+        }
     }
 }

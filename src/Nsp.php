@@ -1,7 +1,23 @@
 <?php
+
+/**
+ * @version     1.0.0-dev
+ * @package     SocketIO Engine
+ * @link        https://localzet.gitbook.io
+ * 
+ * @author      localzet <creator@localzet.ru>
+ * 
+ * @copyright   Copyright (c) 2018-2020 Zorin Projects 
+ * @copyright   Copyright (c) 2020-2022 NONA Team
+ * 
+ * @license     https://www.localzet.ru/license GNU GPLv3 License
+ */
+
 namespace localzet\SocketIO;
+
 use localzet\SocketIO\Event\Emitter;
 use localzet\SocketIO\Parser\Parser;
+
 class Nsp extends Emitter
 {
     public $name = null;
@@ -23,10 +39,10 @@ class Nsp extends Emitter
 
     public function __construct($server, $name)
     {
-         $this->name = $name;
-         $this->server = $server;
-         $this->initAdapter();
-         Debug::debug('Nsp __construct');
+        $this->name = $name;
+        $this->server = $server;
+        $this->initAdapter();
+        Debug::debug('Nsp __construct');
     }
 
     public function __destruct()
@@ -42,8 +58,7 @@ class Nsp extends Emitter
 
     public function to($name)
     {
-        if(!isset($this->rooms[$name]))
-        {
+        if (!isset($this->rooms[$name])) {
             $this->rooms[$name] = $name;
         }
         return $this;
@@ -59,17 +74,14 @@ class Nsp extends Emitter
     {
         $socket_name = $this->server->socket();
         $socket = new $socket_name($this, $client);
-        if('open' === $client->conn->readyState)
-        {
-            $this->sockets[$socket->id]=$socket;
+        if ('open' === $client->conn->readyState) {
+            $this->sockets[$socket->id] = $socket;
             $socket->onconnect();
-            if(!empty($fn)) call_user_func($fn, $socket, $nsp);
+            if (!empty($fn)) call_user_func($fn, $socket, $nsp);
             $this->emit('connect', $socket);
             $this->emit('connection', $socket);
-        }
-        else
-        {
-            echo('next called after client was closed - ignoring socket');
+        } else {
+            echo ('next called after client was closed - ignoring socket');
         }
     }
 
@@ -97,29 +109,25 @@ class Nsp extends Emitter
     public function emit($ev = null)
     {
         $args = func_get_args();
-        if (isset(self::$events[$ev]))
-        {
+        if (isset(self::$events[$ev])) {
             call_user_func_array(array(__CLASS__, 'parent::emit'), $args);
-        }
-        else
-        {
+        } else {
             // set up packet object
 
             $parserType = Parser::EVENT; // default
             //if (self::hasBin($args)) { $parserType = Parser::BINARY_EVENT; } // binary
 
-            $packet = array('type'=> $parserType, 'data'=> $args );
+            $packet = array('type' => $parserType, 'data' => $args);
 
-            if (is_callable(end($args)))
-            {
-                echo('Callbacks are not supported when broadcasting');
+            if (is_callable(end($args))) {
+                echo ('Callbacks are not supported when broadcasting');
                 return;
-             }
+            }
 
-             $this->adapter->broadcast($packet, array(
-                 'rooms'=> $this->rooms,
-                 'flags'=> $this->flags
-             ));
+            $this->adapter->broadcast($packet, array(
+                'rooms' => $this->rooms,
+                'flags' => $this->flags
+            ));
 
             $this->rooms = array();
             $this->flags = array();;
@@ -155,8 +163,8 @@ class Nsp extends Emitter
      * @api public
      */
 
-     public function compress($compress)
-     {
+    public function compress($compress)
+    {
         $this->flags['compress'] = $compress;
         return $this;
     }

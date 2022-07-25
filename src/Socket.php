@@ -1,7 +1,23 @@
 <?php
+
+/**
+ * @version     1.0.0-dev
+ * @package     SocketIO Engine
+ * @link        https://localzet.gitbook.io
+ * 
+ * @author      localzet <creator@localzet.ru>
+ * 
+ * @copyright   Copyright (c) 2018-2020 Zorin Projects 
+ * @copyright   Copyright (c) 2020-2022 NONA Team
+ * 
+ * @license     https://www.localzet.ru/license GNU GPLv3 License
+ */
+
 namespace localzet\SocketIO;
+
 use localzet\SocketIO\Event\Emitter;
 use localzet\SocketIO\Parser\Parser;
+
 class Socket extends Emitter
 {
     public $nsp = null;
@@ -20,7 +36,7 @@ class Socket extends Emitter
     public $disconnected = false;
 
     public static $events = array(
-        'error'=>'error',
+        'error' => 'error',
         'connect' => 'connect',
         'disconnect' => 'disconnect',
         'newListener' => 'newListener',
@@ -38,7 +54,7 @@ class Socket extends Emitter
         $this->nsp = $nsp;
         $this->server = $nsp->server;
         $this->adapter = $this->nsp->adapter;
-        $this->id = ($nsp->name !== '/') ? $nsp->name .'#' .$client->id : $client->id;
+        $this->id = ($nsp->name !== '/') ? $nsp->name . '#' . $client->id : $client->id;
         $this->request = $client->request;
         $this->client = $client;
         $this->conn = $client->conn;
@@ -56,26 +72,24 @@ class Socket extends Emitter
         //todo check this->request->_query
         $info = !empty($this->request->url) ?  parse_url($this->request->url) : array();
         $query = array();
-        if(isset($info['query']))
-        {
+        if (isset($info['query'])) {
             parse_str($info['query'], $query);
         }
         return array(
             'headers' => isset($this->request->headers) ? $this->request->headers : array(),
-            'time'=> date('D M d Y H:i:s') . ' GMT',
-            'address'=> $this->conn->remoteAddress,
-            'xdomain'=> isset($this->request->headers['origin']),
+            'time' => date('D M d Y H:i:s') . ' GMT',
+            'address' => $this->conn->remoteAddress,
+            'xdomain' => isset($this->request->headers['origin']),
             'secure' => !empty($this->request->connection->encrypted),
             'issued' => time(),
             'url' => isset($this->request->url) ? $this->request->url : '',
             'query' => $query,
-       );
+        );
     }
 
     public function __get($name)
     {
-        if($name === 'broadcast')
-        {
+        if ($name === 'broadcast') {
             $this->flags['broadcast'] = true;
             return $this;
         }
@@ -85,12 +99,9 @@ class Socket extends Emitter
     public function emit($ev = null)
     {
         $args = func_get_args();
-        if (isset(self::$events[$ev]))
-        {
+        if (isset(self::$events[$ev])) {
             call_user_func_array(array(__CLASS__, 'parent::emit'), $args);
-        }
-        else
-        {
+        } else {
             $packet = array();
             // todo check
             //$packet['type'] = hasBin($args) ? Parser::BINARY_EVENT : Parser::EVENT;
@@ -98,27 +109,22 @@ class Socket extends Emitter
             $packet['data'] = $args;
             $flags = $this->flags;
             // access last argument to see if it's an ACK callback
-            if (is_callable(end($args)))
-            {
-                if ($this->_rooms || isset($flags['broadcast']))
-                {
+            if (is_callable(end($args))) {
+                if ($this->_rooms || isset($flags['broadcast'])) {
                     throw new \Exception('Callbacks are not supported when broadcasting');
                 }
-                echo('emitting packet with ack id ' . $this->nsp->ids);
+                echo ('emitting packet with ack id ' . $this->nsp->ids);
                 $this->acks[$this->nsp->ids] = array_pop($args);
                 $packet['id'] = $this->nsp->ids++;
             }
 
-            if ($this->_rooms || !empty($flags['broadcast']))
-            {
+            if ($this->_rooms || !empty($flags['broadcast'])) {
                 $this->adapter->broadcast($packet, array(
                     'except' => array($this->id => $this->id),
-                    'rooms'=> $this->_rooms,
+                    'rooms' => $this->_rooms,
                     'flags' => $flags
                 ));
-            }
-            else
-            {
+            } else {
                 // dispatch packet
                 $this->packet($packet);
             }
@@ -141,8 +147,7 @@ class Socket extends Emitter
 
     public function to($name)
     {
-        if(!isset($this->_rooms[$name]))
-        {
+        if (!isset($this->_rooms[$name])) {
             $this->_rooms[$name] = $name;
         }
         return $this;
@@ -202,10 +207,10 @@ class Socket extends Emitter
      * @api private
      */
 
-     public function join($room)
-     {
+    public function join($room)
+    {
         if (!$this->connected) return $this;
-        if(isset($this->rooms[$room])) return $this;
+        if (isset($this->rooms[$room])) return $this;
         $this->adapter->add($this->id, $room);
         $this->rooms[$room] = $room;
         return $this;
@@ -250,9 +255,11 @@ class Socket extends Emitter
     {
         $this->nsp->connected[$this->id] = $this;
         $this->join($this->id);
-        $this->packet(array(
-            'type' => Parser::CONNECT)
-         );
+        $this->packet(
+            array(
+                'type' => Parser::CONNECT
+            )
+        );
     }
 
     /**
@@ -264,8 +271,7 @@ class Socket extends Emitter
 
     public function onpacket($packet)
     {
-        switch ($packet['type'])
-        {
+        switch ($packet['type']) {
             case Parser::EVENT:
                 $this->onevent($packet);
                 break;
@@ -301,8 +307,7 @@ class Socket extends Emitter
     public function onevent($packet)
     {
         $args = isset($packet['data']) ? $packet['data'] : array();
-        if (!empty($packet['id']) || (isset($packet['id']) && $packet['id'] === 0))
-        {
+        if (!empty($packet['id']) || (isset($packet['id']) && $packet['id'] === 0)) {
             $args[] = $this->ack($packet['id']);
         }
         call_user_func_array(array(__CLASS__, 'parent::emit'), $args);
@@ -319,7 +324,7 @@ class Socket extends Emitter
     {
         $self = $this;
         $sent = false;
-        return function()use(&$sent, $id, $self){
+        return function () use (&$sent, $id, $self) {
             // prevent double callbacks
             if ($sent) return;
             $args = func_get_args();
@@ -341,12 +346,11 @@ class Socket extends Emitter
     public function onack($packet)
     {
         $ack = $this->acks[$packet['id']];
-        if (is_callable($ack))
-        {
+        if (is_callable($ack)) {
             call_user_func($ack, $packet['data']);
             unset($this->acks[$packet['id']]);
         } else {
-            echo ('bad ack '. $packet['id']);
+            echo ('bad ack ' . $packet['id']);
         }
     }
 
@@ -370,12 +374,9 @@ class Socket extends Emitter
 
     public function onerror($err)
     {
-        if ($this->listeners('error'))
-        {
+        if ($this->listeners('error')) {
             $this->emit('error', $err);
-        }
-        else
-        {
+        } else {
             //echo('Missing error handler on `socket`.');
         }
     }
@@ -388,8 +389,8 @@ class Socket extends Emitter
      * @api private
      */
 
-     public function onclose($reason)
-     {
+    public function onclose($reason)
+    {
         if (!$this->connected) return $this;
         $this->emit('disconnect', $reason);
         $this->leaveAll();
@@ -417,9 +418,11 @@ class Socket extends Emitter
 
     public function error($err)
     {
-        $this->packet(array(
-            'type' => Parser::ERROR, 'data' => $err )
-         );
+        $this->packet(
+            array(
+                'type' => Parser::ERROR, 'data' => $err
+            )
+        );
     }
 
     /**
@@ -430,15 +433,14 @@ class Socket extends Emitter
      * @api public
      */
 
-    public function disconnect( $close = false )
+    public function disconnect($close = false)
     {
         if (!$this->connected) return $this;
-        if ($close)
-        {
+        if ($close) {
             $this->client->disconnect();
         } else {
             $this->packet(array(
-                'type'=> Parser::DISCONNECT
+                'type' => Parser::DISCONNECT
             ));
             $this->onclose('server namespace disconnect');
         }
@@ -459,10 +461,11 @@ class Socket extends Emitter
         return $this;
     }
 
-    protected function hasBin($args) {
+    protected function hasBin($args)
+    {
         $hasBin = false;
 
-        array_walk_recursive($args, function($item, $key) use ($hasBin) {
+        array_walk_recursive($args, function ($item, $key) use ($hasBin) {
             if (!ctype_print($item)) {
                 $hasBin = true;
             }

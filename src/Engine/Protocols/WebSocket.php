@@ -1,4 +1,17 @@
-<?php 
+<?php
+
+/**
+ * @version     1.0.0-dev
+ * @package     SocketIO Engine
+ * @link        https://localzet.gitbook.io
+ * 
+ * @author      localzet <creator@localzet.ru>
+ * 
+ * @copyright   Copyright (c) 2018-2020 Zorin Projects 
+ * @copyright   Copyright (c) 2020-2022 NONA Team
+ * 
+ * @license     https://www.localzet.ru/license GNU GPLv3 License
+ */
 
 namespace localzet\SocketIO\Engine\Protocols;
 
@@ -16,30 +29,26 @@ class WebSocket
      * @var int
      */
     const MIN_HEAD_LEN = 7;
-    
+
     /**
      * @param string $buffer
      */
     public static function input($buffer, $connection)
     {
-        if(strlen($buffer) < self::MIN_HEAD_LEN)
-        {
+        if (strlen($buffer) < self::MIN_HEAD_LEN) {
             return 0;
         }
         // flash policy file
-        if(0 === strpos($buffer,'<policy'))
-        {
-            $policy_xml = '<?xml version="1.0"?><cross-domain-policy><site-control permitted-cross-domain-policies="all"/><allow-access-from domain="*" to-ports="*"/></cross-domain-policy>'."\0";
+        if (0 === strpos($buffer, '<policy')) {
+            $policy_xml = '<?xml version="1.0"?><cross-domain-policy><site-control permitted-cross-domain-policies="all"/><allow-access-from domain="*" to-ports="*"/></cross-domain-policy>' . "\0";
             $connection->send($policy_xml, true);
             $connection->consumeRecvBuffer(strlen($buffer));
             return 0;
         }
         // http head
         $pos = strpos($buffer, "\r\n\r\n");
-        if(!$pos)
-        {
-            if(strlen($buffer)>=TcpConnection::$maxPackageSize)
-            {
+        if (!$pos) {
+            if (strlen($buffer) >= TcpConnection::$maxPackageSize) {
                 $connection->close("HTTP/1.1 400 bad request\r\n\r\nheader too long");
                 return 0;
             }
@@ -49,7 +58,7 @@ class WebSocket
         $res = new Response($connection);
         $connection->consumeRecvBuffer(strlen($buffer));
         return self::dealHandshake($connection, $req, $res);
-        $connection->consumeRecvBuffer($pos+4);
+        $connection->consumeRecvBuffer($pos + 4);
         return 0;
     }
 
@@ -61,8 +70,7 @@ class WebSocket
      */
     public static function dealHandshake($connection, $req, $res)
     {
-        if(isset($req->headers['sec-websocket-key1']))
-        {
+        if (isset($req->headers['sec-websocket-key1'])) {
             $res->writeHead(400);
             $res->end("Not support");
             return 0;
