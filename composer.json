@@ -6,25 +6,28 @@
         "localzet"
     ],
     "license": "GPL-3.0-only",
-    "authors": [
-        {
-            "name": "localzet",
-            "email": "creator@localzet.ru",
-            "homepage": "https://www.localzet.ru",
-            "role": "Developer"
-        }
-    ],
+    "authors": [{
+        "name": "localzet",
+        "email": "creator@localzet.ru",
+        "homepage": "https://www.localzet.ru",
+        "role": "Developer"
+    }],
     "support": {
-        "email": "creator@localzet.ru"
+        "email": "support@localzet.ru",
+        "docs": "https://localzet.gitbook.io"
     },
+    "funding": [{
+        "type": "other",
+        "url": "https://www.tinkoff.ru/cf/Ad5MBNhodod"
+    }],
     "require": {
         "php": ">=7.4",
-        "localzet/core": ">=v1.0.0",
-        "localzet/channel": ">=v1.0.0"
+        "localzet/core": ">=1.0.0",
+        "localzet/channel": ">=1.0.0"
     },
     "autoload": {
         "psr-4": {
-            "localzet\\SocketIO\\": "./src"
+            "localzet\\SocketIO\\": "./src/"
         }
     }
 }
