@@ -1,64 +1,425 @@
+### Composer ###
+composer.phar
+/vendor/
+
+# Фиксируйте файл блокировки вашего приложения https://getcomposer.org/doc/01-basic-usage.md#commit-your-composer-lock-file-to-version-control
+# Вы можете выбрать игнорирование файла блокировки библиотеки http://getcomposer.org/doc/02-libraries.md#lock-file
+composer.lock
+
+### dotenv ###
+.env
+
+### JetBrains ###
+# Охватывает IDE JetBrains: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm и Rider
+# Ссылка: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
+
+# Пользовательские вещи
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/shelf
+
+# AWS Пользовательские
+.idea/**/aws.xml
+
+# Сгенерированные файлы
+.idea/**/contentModel.xml
+
+# Чувствительные или файлы с высоким оборотом
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+.idea/**/uiDesigner.xml
+.idea/**/dbnavigator.xml
+.idea/**/webServers.xml
+.idea/**/deployment.xml
+
+# Gradle
+.idea/**/gradle.xml
+.idea/**/libraries
+
+# Gradle и Maven с авто-импортом
+# При использовании Gradle или Maven с авто-импортом, вы должны исключить файлы модулей,
+# так как они будут воссозданы и могут вызвать колебания. Раскомментируйте, если используете
+# авто-импорт.
+# .idea/artifacts
+# .idea/compiler.xml
+# .idea/jarRepositories.xml
+# .idea/modules.xml
+# .idea/*.iml
+# .idea/modules
+# *.iml
+# *.ipr
+
+# CMake
+cmake-build-*/
+
+# Плагин Mongo Explorer
+.idea/**/mongoSettings.xml
+
+# Формат проекта на основе файлов
+*.iws
+
+# IntelliJ
+out/
+
+# Плагин mpeltonen/sbt-idea
+.idea_modules/
+
+# Плагин JIRA
+atlassian-ide-plugin.xml
+
+# Плагин Cursive Clojure
+.idea/replstate.xml
+
+# Плагин SonarLint
+.idea/sonarlint/
+
+# Плагин Crashlytics (для Android Studio и IntelliJ)
+com_crashlytics_export_strings.xml
+crashlytics.properties
+crashlytics-build.properties
+fabric.properties
+
+# Редактор на основе Rest Client
+.idea/httpRequests
+
+# Сериализованный файл кэша Android studio 3.1+
+.idea/caches/build_file_checksums.ser
+
+### JetBrains Patch ###
+# Причина комментария: https://github.com/joeblau/gitignore.io/issues/186#issuecomment-215987721
+
+# *.iml
+# modules.xml
+# .idea/misc.xml
+# *.ipr
+
+# Плагин Sonarlint
+# https://plugins.jetbrains.com/plugin/7973-sonarlint
+.idea/**/sonarlint/
+
+# Плагин SonarQube
+# https://plugins.jetbrains.com/plugin/7238-sonarqube-community-plugin
+.idea/**/sonarIssues.xml
+
+# Плагин Markdown Navigator
+# https://plugins.jetbrains.com/plugin/7896-markdown-navigator-enhanced
+.idea/**/markdown-navigator.xml
+.idea/**/markdown-navigator-enh.xml
+.idea/**/markdown-navigator/
+
+# Ошибка создания файла кэша
+# См. https://youtrack.jetbrains.com/issue/JBR-2257
+.idea/$CACHE_FILE$
+
+# Плагин CodeStream
+# https://plugins.jetbrains.com/plugin/12206-codestream
+.idea/codestream.xml
+
+# Плагин Azure Toolkit for IntelliJ
+# https://plugins.jetbrains.com/plugin/8053-azure-toolkit-for-intellij
+.idea/**/azureSettings.xml
+
+### Linux ###
+*~
+
+# Временные файлы, которые могут быть созданы, если процесс все еще имеет открытый дескриптор удаленного файла
+.fuse_hidden*
+
+# Настройки директории KDE
+.directory
+
+# Корзина Linux, которая может появиться на любом разделе или диске
+.Trash-*
+
+# .nfs файлы создаются, когда открытый файл удаляется, но все еще используется
+.nfs*
+
+### Node ###
+# Логи
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Диагностические отчеты (https://nodejs.org/api/report.html)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Данные во время выполнения
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Директория для инструментированных библиотек, созданных jscoverage/JSCover
+lib-cov
+
+# Директория покрытия, используемая такими инструментами, как istanbul
+coverage
+*.lcov
+
+# Покрытие тестов nyc
+.nyc_output
+
+# Промежуточное хранилище Grunt (https://gruntjs.com/creating-plugins#storing-task-files)
+.grunt
+
+# Директория зависимостей Bower (https://bower.io/)
+bower_components
+
+# Конфигурация node-waf
+.lock-wscript
+
+# Скомпилированные двоичные дополнения (https://nodejs.org/api/addons.html)
+build/Release
+
+# Директории зависимостей
+node_modules/
+jspm_packages/
+
+### Snowpack ###
+web_modules/
+
+### TypeScript ###
+*.tsbuildinfo
+
+### npm ###
+.npm
+
+### eslint ###
+.eslintcache
+
+### stylelint ###
+.stylelintcache
+
+### Microbundle ###
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+### REPL history ###
+.node_repl_history
+
+### npm pack ###
+*.tgz
+
+### Yarn ###
+.yarn-integrity
+
+### dotenv ###
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
+### parcel-bundler ###
+.cache
+.parcel-cache
+
+### Next.js ###
+.next
+out
+
+### Nuxt.js ###
+.nuxt
+dist
+
+### Gatsby ###
+.cache/
+# Раскомментируйте строку public, если ваш проект использует Gatsby, а не Next.js
+# https://nextjs.org/blog/next-9-1#public-directory-support
+# public
+
+### vuepress ###
+.vuepress/dist
+
+### vuepress v2.x ###
+.temp
+
+### Docusaurus ###
+.docusaurus
+
+### Serverless ###
+.serverless/
+
+### FuseBox ###
+.fusebox/
+
+### DynamoDB Local ###
+.dynamodb/
+
+### TernJS ###
+.tern-port
+
+### VSCode versions for testing extensions ###
+.vscode-test
+
+### yarn v2 ###
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+### Node Patch ###
+.webpack/
+
+### SvelteKit ###
+.svelte-kit
+
+### PhpStorm ###
+# Охватывает IDE JetBrains: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm и Rider
+# Ссылка: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
+
+# Пользовательские вещи
+
+# AWS Пользовательские
+
+# Сгенерированные файлы
+
+# Чувствительные или файлы с высоким оборотом
+
+# Gradle
+
+# Gradle и Maven с авто-импортом
+# При использовании Gradle или Maven с авто-импортом, вы должны исключить файлы модулей,
+# так как они будут воссозданы и могут вызвать колебания. Раскомментируйте, если используете
+# авто-импорт.
+# .idea/artifacts
+# .idea/compiler.xml
+# .idea/jarRepositories.xml
+# .idea/modules.xml
+# .idea/*.iml
+# .idea/modules
+# *.iml
+# *.ipr
+
+### PhpStorm Patch ###
+# Причина комментария: https://github.com/joeblau/gitignore.io/issues/186#issuecomment-215987721
+
+# *.iml
+# modules.xml
+# .idea/misc.xml
+# *.ipr
+
+# Плагин Sonarlint
+# https://plugins.jetbrains.com/plugin/7973-sonarlint
+
+# Плагин SonarQube
+# https://plugins.jetbrains.com/plugin/7238-sonarqube-community-plugin
+
+# Плагин Markdown Navigator
+# https://plugins.jetbrains.com/plugin/7896-markdown-navigator-enhanced
+
+# Ошибка создания файла кэша
+# См. https://youtrack.jetbrains.com/issue/JBR-2257
+
+# Плагин CodeStream
+# https://plugins.jetbrains.com/plugin/12206-codestream
+
+# Плагин Azure Toolkit for IntelliJ
+# https://plugins.jetbrains.com/plugin/8053-azure-toolkit-for-intellij
+
+### PHPUnit ###
+# Охватывает PHPUnit
+# Ссылка: https://phpunit.de/
+
+# Сгенерированные файлы
+.phpunit.result.cache
+.phpunit.cache
+
+# PHPUnit
+/app/phpunit.xml
+/phpunit.xml
+
+# Данные сборки
+/build/
+
+### SVN ###
+.svn/
+
+### VisualStudioCode ###
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# Локальная история для Visual Studio Code
+.history/
+
+# Собранные расширения Visual Studio Code
+*.vsix
+
+### VisualStudioCode Patch ###
+# Игнорировать всю локальную историю файлов
+.history
+.ionide
+
+### Windows ###
+# Файлы кэша миниатюр Windows
 Thumbs.db
 Thumbs.db:encryptable
 ehthumbs.db
 ehthumbs_vista.db
 
+# Файл дампа
 *.stackdump
 
+# Файл конфигурации папки
 [Dd]esktop.ini
 
+# Корзина для использования на общих файлах
 $RECYCLE.BIN/
 
-.svn/
-
-*.ppk
-*.log
+# Файлы установщика Windows
 *.cab
 *.msi
 *.msix
 *.msm
 *.msp
-*.lnk 
 
-*~
+# Ярлыки Windows
+*.lnk
 
+
+
+# CSS, SASS, SCSS maps
 *.css.map
 *.sass.map
 *.scss.map
 
-phpunit.xml
+# Dotfiles
+#.*
+!.gitignore
+!.npmignore
+!.babelrc
+!.travis.yml
+
+# PHPUnit and PHPStan
 /phpstan.neon
-composer.phar
-composer.lock
-/vendor/
 
+# PPK
+*.ppk
 
+# Un~
+[._]*.un~
+
+# Vim
 [._]*.s[a-v][a-z]
 !*.svg
 [._]*.sw[a-p]
 [._]s[a-rt-v][a-z]
 [._]ss[a-gi-z]
 [._]sw[a-p]
-
 Session.vim
 Sessionx.vim
-
-[._]*.un~
-
-node_modules
-coverage
-
-build
-dist
-
-.*
-!.gitignore
-!.npmignore
-!.babelrc
-!.travis.yml
-
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-*.code-workspace
