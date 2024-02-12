@@ -12,19 +12,20 @@
         "communication",
         "event-based"
     ],
-    "license": "GPL-3.0-only",
-    "authors": [{
-        "role": "Developer",
-        "name": "localzet",
-        "email": "creator@localzet.com",
-        "homepage": "https://github.com/localzet",
-    }],
+    "license": "AGPL-3.0-or-later",
+    "authors": [
+        {
+            "role": "Developer",
+            "name": "Ivan Zorin",
+            "email": "creator@localzet.com",
+            "homepage": "https://github.com/localzet"
+          }
+    ],
     "support": {
         "email": "support@localzet.com",
-        "issues": "https://github.com/localzet/SocketIO/issues"
+        "issues": "https://github.com/localzet/SocketIO/issues",
         "source": "https://github.com/localzet/SocketIO"
     },
-
     "require": {
         "php": ">=7.4",
         "localzet/core": ">=1.0.0",
