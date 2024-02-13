@@ -14,6 +14,7 @@
 
 namespace localzet\SocketIO\Engine\Protocols;
 
+use Exception;
 use \localzet\SocketIO\Engine\Protocols\WebSocket;
 use \localzet\SocketIO\Engine\Protocols\Http\Request;
 use \localzet\SocketIO\Engine\Protocols\Http\Response;
@@ -94,7 +95,7 @@ class SocketIO
     {
         try {
             call_user_func($connection->onRequest, $req, $res);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             echo $e;
         }
     }
@@ -105,7 +106,7 @@ class SocketIO
         if (isset($req->onClose)) {
             try {
                 call_user_func($req->onClose, $req);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 echo $e;
             }
         }
@@ -113,7 +114,7 @@ class SocketIO
         if (isset($res->onClose)) {
             try {
                 call_user_func($res->onClose, $res);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 echo $e;
             }
         }
@@ -143,7 +144,7 @@ class SocketIO
         if (isset($req->onData)) {
             try {
                 call_user_func($req->onData, $req, $data);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 echo $e;
             }
         }
@@ -154,7 +155,7 @@ class SocketIO
         if (isset($req->onEnd)) {
             try {
                 call_user_func($req->onEnd, $req);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 echo $e;
             }
         }
