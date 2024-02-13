@@ -31,22 +31,22 @@ class Emitter
     /**
      * [event=>[[listener1, once?], [listener2,once?], ..], ..]
      */
-    protected $_eventListenerMap = array();
+    protected $_eventListenerMap = [];
 
-    public function on($event_name, $listener)
+    public function on($event_name, $listener): Emitter
     {
         $this->emit('newListener', $event_name, $listener);
-        $this->_eventListenerMap[$event_name][] = array($listener, 0);
+        $this->_eventListenerMap[$event_name][] = [$listener, 0];
         return $this;
     }
 
-    public function once($event_name, $listener)
+    public function once($event_name, $listener): Emitter
     {
-        $this->_eventListenerMap[$event_name][] = array($listener, 1);
+        $this->_eventListenerMap[$event_name][] = [$listener, 1];
         return $this;
     }
 
-    public function removeListener($event_name, $listener)
+    public function removeListener($event_name, $listener): Emitter
     {
         if (!isset($this->_eventListenerMap[$event_name])) {
             return $this;
@@ -63,23 +63,23 @@ class Emitter
         return $this;
     }
 
-    public function removeAllListeners($event_name = null)
+    public function removeAllListeners($event_name = null): Emitter
     {
         $this->emit('removeListener', $event_name);
         if (null === $event_name) {
-            $this->_eventListenerMap = array();
+            $this->_eventListenerMap = [];
             return $this;
         }
         unset($this->_eventListenerMap[$event_name]);
         return $this;
     }
 
-    public function listeners($event_name)
+    public function listeners($event_name): array
     {
         if (empty($this->_eventListenerMap[$event_name])) {
-            return array();
+            return [];
         }
-        $listeners = array();
+        $listeners = [];
         foreach ($this->_eventListenerMap[$event_name] as $item) {
             $listeners[] = $item[0];
         }
