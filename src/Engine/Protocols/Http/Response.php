@@ -14,6 +14,8 @@
 
 namespace localzet\SocketIO\Engine\Protocols\Http;
 
+use Exception;
+
 class Response
 {
     public $statusCode = 200;
@@ -22,7 +24,7 @@ class Response
 
     protected $_connection = null;
 
-    protected $_headers = array();
+    protected $_headers = [];
 
     public $headersSent = false;
 
@@ -60,10 +62,10 @@ class Response
         $this->headersSent = true;
     }
 
-    public function getHeadBuffer()
+    public function getHeadBuffer(): string
     {
         if (!$this->_statusPhrase) {
-            $this->_statusPhrase = isset(self::$codes[$this->statusCode]) ? self::$codes[$this->statusCode] : '';
+            $this->_statusPhrase = self::$codes[$this->statusCode] ?? '';
         }
         $head_buffer = "HTTP/1.1 $this->statusCode $this->_statusPhrase\r\n";
         if (!isset($this->_headers['Content-Length']) && !isset($this->_headers['Transfer-Encoding'])) {
@@ -91,7 +93,7 @@ class Response
 
     public function getHeader($name)
     {
-        return isset($this->_headers[$name]) ? $this->_headers[$name] : '';
+        return $this->_headers[$name] ?? '';
     }
 
     public function removeHeader($name)
@@ -116,7 +118,7 @@ class Response
     public function end($data = null)
     {
         if (!$this->writable) {
-            echo new \Exception('unwirtable');
+            echo new Exception('unwirtable');
             return false;
         }
         if ($data !== null) {
@@ -151,7 +153,7 @@ class Response
         $this->writable = false;
     }
 
-    public static $codes = array(
+    public static $codes = [
         100 => 'Continue',
         101 => 'Switching Protocols',
         200 => 'OK',
@@ -195,5 +197,5 @@ class Response
         503 => 'Service Unavailable',
         504 => 'Gateway Timeout',
         505 => 'HTTP Version Not Supported',
-    );
+    ];
 }
