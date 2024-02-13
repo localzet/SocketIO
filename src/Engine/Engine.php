@@ -22,44 +22,46 @@ use \localzet\SocketIO\Debug;
 
 class Engine extends Emitter
 {
+    public $server;
     public $pingTimeout = 60;
     public $pingInterval = 25;
     public $upgradeTimeout = 5;
-    public $transports = array();
-    public $allowUpgrades = array();
-    public $allowRequest = array();
-    public $clients = array();
+    public $transports = [];
+    public $allowUpgrades = [];
+    public $allowRequest = [];
+    public $clients = [];
     public $origins = '*:*';
-    public static $allowTransports = array(
+    public static $allowTransports = [
         'polling' => 'polling',
         'websocket' => 'websocket'
-    );
+    ];
 
-    public static $errorMessages = array(
+    public static $errorMessages = [
         'Transport unknown',
         'Session ID unknown',
         'Bad handshake method',
         'Bad request'
-    );
+    ];
 
-    const ERROR_UNKNOWN_TRANSPORT = 0;
+    private const ERROR_UNKNOWN_TRANSPORT = 0;
 
-    const ERROR_UNKNOWN_SID = 1;
+    private const ERROR_UNKNOWN_SID = 1;
 
-    const ERROR_BAD_HANDSHAKE_METHOD = 2;
+    private const ERROR_BAD_HANDSHAKE_METHOD = 2;
 
-    const ERROR_BAD_REQUEST = 3;
+    private const ERROR_BAD_REQUEST = 3;
 
-    public function __construct($opts = array())
+    public function __construct($opts = [])
     {
-        $ops_map = array(
+        $ops_map = [
             'pingTimeout',
             'pingInterval',
             'upgradeTimeout',
             'transports',
             'allowUpgrades',
             'allowRequest'
-        );
+        ];
+
         foreach ($ops_map as $key) {
             if (isset($opts[$key])) {
                 $this->$key = $opts[$key];
@@ -73,14 +75,17 @@ class Engine extends Emitter
         Debug::debug('Engine __destruct');
     }
 
-    public function handleRequest($req, $res)
+    public function handleRequest(object $req, object $res)
     {
         $this->prepare($req);
         $req->res = $res;
-        $this->verify($req, $res, false, array($this, 'dealRequest'));
+        $this->verify($req, $res, false, [$this, 'dealRequest']);
     }
 
-    public function dealRequest($err, $success, $req)
+    /**
+     * @throws Exception
+     */
+    public function dealRequest($err, bool $success, object $req)
     {
         if (!$success) {
             self::sendErrorMessage($req, $req->res, $err);
@@ -94,9 +99,9 @@ class Engine extends Emitter
         }
     }
 
-    protected function sendErrorMessage($req, $res, $code)
+    protected function sendErrorMessage(object $req, object $res, string $code): void
     {
-        $headers = array('Content-Type' => 'application/json');
+        $headers = ['Content-Type' => 'application/json'];
         if (isset($req->headers['origin'])) {
             $headers['Access-Control-Allow-Credentials'] = 'true';
             $headers['Access-Control-Allow-Origin'] = $req->headers['origin'];
@@ -105,22 +110,23 @@ class Engine extends Emitter
         }
 
         $res->writeHead(403, '', $headers);
-        $res->end(json_encode(array(
-            'status' => $code,
-            'error' => isset(self::$errorMessages[$code]) ? self::$errorMessages[$code] : $code
-        )));
+        $res->end(
+            json_encode(
+                [
+                    'code' => $code,
+                    'message' => self::$errorMessages[$code] ?? $code
+                ]
+            )
+        );
     }
 
-    protected function verify($req, $res, $upgrade, $fn)
+    protected function verify(object $req, object $res, bool $upgrade, callable $fn)
     {
         if (!isset($req->_query['transport']) || !isset(self::$allowTransports[$req->_query['transport']])) {
             return call_user_func($fn, self::ERROR_UNKNOWN_TRANSPORT, false, $req, $res);
         }
         $transport = $req->_query['transport'];
-        $sid = isset($req->_query['sid']) ? $req->_query['sid'] : '';
-        /*if ($transport === 'websocket' && empty($sid)) {
-            return call_user_func($fn, self::ERROR_UNKNOWN_TRANSPORT, false, $req, $res);
-        }*/
+        $sid = $req->_query['sid'] ?? '';
         if ($sid) {
             if (!isset($this->clients[$sid])) {
                 return call_user_func($fn, self::ERROR_UNKNOWN_SID, false, $req, $res);
@@ -137,7 +143,7 @@ class Engine extends Emitter
         call_user_func($fn, null, true, $req, $res);
     }
 
-    public function checkRequest($req, $res, $fn)
+    public function checkRequest(object $req, object $res, callable $fn)
     {
         if ($this->origins === "*:*" || empty($this->origins)) {
             return call_user_func($fn, null, true, $req, $res);
@@ -145,7 +151,7 @@ class Engine extends Emitter
         $origin = null;
         if (isset($req->headers['origin'])) {
             $origin = $req->headers['origin'];
-        } else if (isset($req->headers['referer'])) {
+        } elseif (isset($req->headers['referer'])) {
             $origin = $req->headers['referer'];
         }
 
@@ -157,7 +163,7 @@ class Engine extends Emitter
         if ($origin) {
             $parts = parse_url($origin);
             $defaultPort = 'https:' === $parts['scheme'] ? 443 : 80;
-            $parts['port'] = isset($parts['port']) ? $parts['port'] : $defaultPort;
+            $parts['port'] = $parts['port'] ?? $defaultPort;
             $allowed_origins = explode(' ', $this->origins);
             foreach ($allowed_origins as $allow_origin) {
                 $ok =
@@ -166,15 +172,14 @@ class Engine extends Emitter
                     $allow_origin === $parts['scheme'] . '://' . $parts['host'] . ':*' ||
                     $allow_origin === '*:' . $parts['port'];
                 if ($ok) {
-                    # 只需要有一个白名单通过，则都通过
-                    return call_user_func($fn, null, $ok, $req, $res);
+                    return call_user_func($fn, null, true, $req, $res);
                 }
             }
         }
         call_user_func($fn, null, false, $req, $res);
     }
 
-    protected function prepare($req)
+    protected function prepare(object $req)
     {
         if (!isset($req->_query)) {
             $info = parse_url($req->url);
@@ -184,7 +189,10 @@ class Engine extends Emitter
         }
     }
 
-    public function handshake($transport, $req)
+    /**
+     * @throws Exception
+     */
+    public function handshake(string $transport, object $req)
     {
         $id = bin2hex(pack('d', microtime(true)) . pack('N', function_exists('random_int') ? random_int(1, 100000000) : rand(1, 100000000)));
         if ($transport == 'websocket') {
@@ -201,33 +209,28 @@ class Engine extends Emitter
 
         $socket = new Socket($id, $this, $transport, $req);
 
-        /* $transport->on('headers', function(&$headers)use($id)
-        {
-            $headers['Set-Cookie'] = "io=$id";
-        }); */
-
         $transport->onRequest($req);
 
         $this->clients[$id] = $socket;
-        $socket->once('close', array($this, 'onSocketClose'));
+        $socket->once('close', [$this, 'onSocketClose']);
         $this->emit('connection', $socket);
     }
 
-    public function onSocketClose($id)
+    public function onSocketClose($id): void
     {
         unset($this->clients[$id]);
     }
 
-    public function attach($core)
+    public function attach($worker): void
     {
-        $this->server = $core;
-        $core->onConnect = array($this, 'onConnect');
+        $this->server = $worker;
+        $worker->onConnect = [$this, 'onConnect'];
     }
 
-    public function onConnect($connection)
+    public function onConnect(object $connection): void
     {
-        $connection->onRequest = array($this, 'handleRequest');
-        $connection->onWebSocketConnect = array($this, 'onWebSocketConnect');
+        $connection->onRequest = [$this, 'handleRequest'];
+        $connection->onWebSocketConnect = [$this, 'onWebSocketConnect'];
         // clean
         $connection->onClose = function ($connection) {
             if (!empty($connection->httpRequest)) {
@@ -247,19 +250,21 @@ class Engine extends Emitter
         };
     }
 
-    public function onWebSocketConnect($connection, $req, $res)
+    public function onWebSocketConnect($connection, object $req, object $res): void
     {
         $this->prepare($req);
-        $this->verify($req, $res, true, array($this, 'dealWebSocketConnect'));
+        $this->verify($req, $res, true, [$this, 'dealWebSocketConnect']);
     }
 
-    public function dealWebSocketConnect($err, $success, $req, $res)
+    /**
+     * @throws Exception
+     */
+    public function dealWebSocketConnect($err, bool $success, object $req, object $res): void
     {
         if (!$success) {
             self::sendErrorMessage($req, $res, $err);
             return;
         }
-
 
         if (isset($req->_query['sid'])) {
             if (!isset($this->clients[$req->_query['sid']])) {
