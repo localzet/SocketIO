@@ -18,9 +18,6 @@ use localzet\Server\Connection\ConnectionInterface;
 use localzet\Server\Connection\TcpConnection;
 use localzet\Server\Protocols\ProtocolInterface;
 
-/**
- * WebSocket 协议服务端解包和打包
- */
 class RFC6455 implements ProtocolInterface
 {
     /**

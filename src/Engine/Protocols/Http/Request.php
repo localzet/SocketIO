@@ -22,7 +22,7 @@ class Request
 
     public $httpVersion = null;
 
-    public $headers = array();
+    public $headers = [];
 
     public $rawHeaders = null;
 
