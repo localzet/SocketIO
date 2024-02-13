@@ -3,20 +3,20 @@
 /**
  * @package     SocketIO Engine
  * @link        https://localzet.gitbook.io
- * 
+ *
  * @author      localzet <creator@localzet.ru>
- * 
- * @copyright   Copyright (c) 2018-2020 Zorin Projects 
+ *
+ * @copyright   Copyright (c) 2018-2020 Zorin Projects
  * @copyright   Copyright (c) 2020-2022 NONA Team
- * 
+ *
  * @license     https://www.localzet.ru/license GNU GPLv3 License
  */
 
 namespace localzet\SocketIO\Engine;
 
-use \localzet\SocketIO\Event\Emitter;
-use \localzet\Server\Lib\Timer;
-use \localzet\SocketIO\Debug;
+use localzet\Server\Lib\Timer;
+use localzet\SocketIO\Debug;
+use localzet\SocketIO\Event\Emitter;
 
 class Socket extends Emitter
 {
@@ -190,7 +190,7 @@ class Socket extends Emitter
                     break;
             }
         } else {
-            echo ('packet received with closed socket');
+            echo('packet received with closed socket');
         }
     }
 
@@ -360,10 +360,10 @@ class Socket extends Emitter
         if ($this->sentCallbackFn) {
             $seqFn = array_shift($this->sentCallbackFn);
             if (is_callable($seqFn)) {
-                echo ('executing send callback');
+                echo('executing send callback');
                 call_user_func($seqFn, $this->transport);
             } elseif (is_array($seqFn)) {
-                echo ('executing batch send callback');
+                echo('executing batch send callback');
                 foreach ($seqFn as $fn) {
                     call_user_func($fn, $this->transport);
                 }

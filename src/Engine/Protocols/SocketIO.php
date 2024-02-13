@@ -3,22 +3,21 @@
 /**
  * @package     SocketIO Engine
  * @link        https://localzet.gitbook.io
- * 
+ *
  * @author      localzet <creator@localzet.ru>
- * 
- * @copyright   Copyright (c) 2018-2020 Zorin Projects 
+ *
+ * @copyright   Copyright (c) 2018-2020 Zorin Projects
  * @copyright   Copyright (c) 2020-2022 NONA Team
- * 
+ *
  * @license     https://www.localzet.ru/license GNU GPLv3 License
  */
 
 namespace localzet\SocketIO\Engine\Protocols;
 
 use Exception;
-use \localzet\SocketIO\Engine\Protocols\WebSocket;
-use \localzet\SocketIO\Engine\Protocols\Http\Request;
-use \localzet\SocketIO\Engine\Protocols\Http\Response;
-use \localzet\Server\Connection\TcpConnection;
+use localzet\Server\Connection\TcpConnection;
+use localzet\SocketIO\Engine\Protocols\Http\Request;
+use localzet\SocketIO\Engine\Protocols\Http\Response;
 
 class SocketIO
 {

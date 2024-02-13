@@ -3,12 +3,12 @@
 /**
  * @package     SocketIO Engine
  * @link        https://localzet.gitbook.io
- * 
+ *
  * @author      localzet <creator@localzet.ru>
- * 
- * @copyright   Copyright (c) 2018-2020 Zorin Projects 
+ *
+ * @copyright   Copyright (c) 2018-2020 Zorin Projects
  * @copyright   Copyright (c) 2020-2022 NONA Team
- * 
+ *
  * @license     https://www.localzet.ru/license GNU GPLv3 License
  */
 
@@ -80,7 +80,7 @@ class Nsp extends Emitter
             $this->emit('connect', $socket);
             $this->emit('connection', $socket);
         } else {
-            echo ('next called after client was closed - ignoring socket');
+            echo('next called after client was closed - ignoring socket');
         }
     }
 
@@ -117,7 +117,7 @@ class Nsp extends Emitter
             $packet = ['type' => $parserType, 'data' => $args];
 
             if (is_callable(end($args))) {
-                echo ('Callbacks are not supported when broadcasting');
+                echo('Callbacks are not supported when broadcasting');
                 return;
             }
 

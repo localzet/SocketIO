@@ -3,19 +3,19 @@
 /**
  * @package     SocketIO Engine
  * @link        https://localzet.gitbook.io
- * 
+ *
  * @author      localzet <creator@localzet.ru>
- * 
- * @copyright   Copyright (c) 2018-2020 Zorin Projects 
+ *
+ * @copyright   Copyright (c) 2018-2020 Zorin Projects
  * @copyright   Copyright (c) 2020-2022 NONA Team
- * 
+ *
  * @license     https://www.localzet.ru/license GNU GPLv3 License
  */
 
 namespace localzet\SocketIO\Engine\Protocols\WebSocket;
 
+use Exception;
 use localzet\Server\Connection\ConnectionInterface;
-use localzet\Server\Connection\TcpConnection;
 use localzet\Server\Protocols\ProtocolInterface;
 
 class RFC6455 implements ProtocolInterface
@@ -67,33 +67,31 @@ class RFC6455 implements ProtocolInterface
             $is_fin_frame = $firstbyte >> 7;
             $opcode = $firstbyte & 0xf;
             switch ($opcode) {
-                    // 附加数据帧 @todo 实现附加数据帧
+                // 附加数据帧 @todo 实现附加数据帧
                 case 0x0:
                     break;
-                    // 文本数据帧
+                // 文本数据帧
                 case 0x1:
                     break;
-                    // 二进制数据帧
+                // 二进制数据帧
                 case 0x2:
                     break;
-                    // 关闭的包
+                // 关闭的包
                 case 0x8:
                     // 如果有设置onWebSocketClose回调，尝试执行
                     if (isset($connection->onWebSocketClose)) {
                         call_user_func($connection->onWebSocketClose, $connection);
-                    }
-                    // 默认行为是关闭连接
+                    } // 默认行为是关闭连接
                     else {
                         $connection->close();
                     }
                     return 0;
-                    // ping的包
+                // ping的包
                 case 0x9:
                     // 如果有设置onWebSocketPing回调，尝试执行
                     if (isset($connection->onWebSocketPing)) {
                         call_user_func($connection->onWebSocketPing, $connection);
-                    }
-                    // 默认发送pong
+                    } // 默认发送pong
                     else {
                         $connection->send(pack('H*', '8a00'), true);
                     }
@@ -103,7 +101,7 @@ class RFC6455 implements ProtocolInterface
                         return 0;
                     }
                     break;
-                    // pong的包
+                // pong的包
                 case 0xa:
                     // 如果有设置onWebSocketPong回调，尝试执行
                     if (isset($connection->onWebSocketPong)) {
@@ -115,7 +113,7 @@ class RFC6455 implements ProtocolInterface
                         return 0;
                     }
                     break;
-                    // 错误的opcode 
+                // 错误的opcode
                 default:
                     echo "error opcode $opcode and close websocket connection\n";
                     $connection->close();
@@ -153,8 +151,7 @@ class RFC6455 implements ProtocolInterface
             $connection->consumeRecvBuffer($connection->websocketCurrentFrameLength);
             $connection->websocketCurrentFrameLength = 0;
             return 0;
-        }
-        // 收到的数据大于一个frame
+        } // 收到的数据大于一个frame
         elseif ($connection->websocketCurrentFrameLength < $recv_len) {
             self::decode(substr($buffer, 0, $connection->websocketCurrentFrameLength), $connection);
             $connection->consumeRecvBuffer($connection->websocketCurrentFrameLength);
@@ -162,8 +159,7 @@ class RFC6455 implements ProtocolInterface
             $connection->websocketCurrentFrameLength = 0;
             // 继续读取下一个frame
             return self::input(substr($buffer, $current_frame_length), $connection);
-        }
-        // 收到的数据不足一个frame
+        } // 收到的数据不足一个frame
         else {
             return 0;
         }
@@ -234,10 +230,10 @@ class RFC6455 implements ProtocolInterface
         if (isset($connection->onWebSocketConnect)) {
             try {
                 call_user_func_array($connection->onWebSocketConnect, [$connection, $req, $res]);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 echo $e;
             }
-            if (! $res->writable) {
+            if (!$res->writable) {
                 return false;
             }
         }
@@ -271,7 +267,7 @@ class RFC6455 implements ProtocolInterface
         $res->end();
 
         // 握手后有数据要发送
-        if (! empty($connection->websocketTmpData)) {
+        if (!empty($connection->websocketTmpData)) {
             $connection->send($connection->websocketTmpData, true);
             $connection->websocketTmpData = '';
         }

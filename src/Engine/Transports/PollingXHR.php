@@ -3,18 +3,19 @@
 /**
  * @package     SocketIO Engine
  * @link        https://localzet.gitbook.io
- * 
+ *
  * @author      localzet <creator@localzet.ru>
- * 
- * @copyright   Copyright (c) 2018-2020 Zorin Projects 
+ *
+ * @copyright   Copyright (c) 2018-2020 Zorin Projects
  * @copyright   Copyright (c) 2020-2022 NONA Team
- * 
+ *
  * @license     https://www.localzet.ru/license GNU GPLv3 License
  */
 
 namespace localzet\SocketIO\Engine\Transports;
 
-use \localzet\SocketIO\Debug;
+use Exception;
+use localzet\SocketIO\Debug;
 
 class PollingXHR extends Polling
 {
@@ -52,7 +53,7 @@ class PollingXHR extends Polling
             'X-XSS-Protection' => '0',
         ];
         if (empty($this->res)) {
-            echo new \Exception('empty this->res');
+            echo new Exception('empty this->res');
             return;
         }
         $this->res->writeHead(200, '', $this->headers($this->req, $headers));

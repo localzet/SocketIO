@@ -3,22 +3,20 @@
 /**
  * @package     SocketIO Engine
  * @link        https://localzet.gitbook.io
- * 
+ *
  * @author      localzet <creator@localzet.ru>
- * 
- * @copyright   Copyright (c) 2018-2020 Zorin Projects 
+ *
+ * @copyright   Copyright (c) 2018-2020 Zorin Projects
  * @copyright   Copyright (c) 2020-2022 NONA Team
- * 
+ *
  * @license     https://www.localzet.ru/license GNU GPLv3 License
  */
 
 namespace localzet\SocketIO\Engine;
 
-use \localzet\SocketIO\Engine\Transports\Polling;
-use \localzet\SocketIO\Engine\Transports\PollingXHR;
-use \localzet\SocketIO\Engine\Transports\WebSocket;
-use \localzet\SocketIO\Event\Emitter;
-use \localzet\SocketIO\Debug;
+use localzet\SocketIO\Debug;
+use localzet\SocketIO\Engine\Transports\WebSocket;
+use localzet\SocketIO\Event\Emitter;
 
 class Engine extends Emitter
 {
