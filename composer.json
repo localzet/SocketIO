@@ -1,6 +1,6 @@
 {
-    "name": "localzet/socket",
-    "description": "Localzet Socket is a PHP SocketIO library developed by Localzet. It provides functionality for real-time bidirectional event-based communication.",
+    "name": "localzet/socketio",
+    "description": "Localzet SocketIO is a PHP SocketIO library developed by Localzet. It provides functionality for real-time bidirectional event-based communication.",
     "type": "library",
     "keywords": [
         "SocketIO",

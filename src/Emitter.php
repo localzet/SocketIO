@@ -34,7 +34,7 @@ class Emitter
         }
 
         if (!$this->_client) {
-            throw new Exception($errmsg);
+            throw new \Exception($errmsg);
         }
     }
 
