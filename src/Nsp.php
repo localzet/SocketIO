@@ -19,22 +19,21 @@ use localzet\SocketIO\Parser\Parser;
 
 class Nsp extends Emitter
 {
+    public $adapter;
     public $name = null;
     public $server = null;
-    public $rooms = array();
-    public $flags = array();
-    public $sockets = array();
-    public $connected = array();
-    public $fns = array();
+    public $rooms = [];
+    public $flags = [];
+    public $sockets = [];
+    public $connected = [];
+    public $fns = [];
     public $ids = 0;
-    public $acks = array();
-    public static $events = array(
+    public $acks = [];
+    public static $events = [
         'connect' => 'connect',    // for symmetry with client
         'connection' => 'connection',
         'newListener' => 'newListener'
-    );
-
-    //public static $flags = array('json','volatile');
+    ];
 
     public function __construct($server, $name)
     {
@@ -55,7 +54,7 @@ class Nsp extends Emitter
         $this->adapter = new $adapter_name($this);
     }
 
-    public function to($name)
+    public function to($name): Nsp
     {
         if (!isset($this->rooms[$name])) {
             $this->rooms[$name] = $name;
@@ -63,11 +62,10 @@ class Nsp extends Emitter
         return $this;
     }
 
-    public function in($name)
+    public function in($name): Nsp
     {
         return $this->to($name);
     }
-
 
     public function add($client, $nsp, $fn)
     {
@@ -76,7 +74,9 @@ class Nsp extends Emitter
         if ('open' === $client->conn->readyState) {
             $this->sockets[$socket->id] = $socket;
             $socket->onconnect();
-            if (!empty($fn)) call_user_func($fn, $socket, $nsp);
+            if (!empty($fn)) {
+                call_user_func($fn, $socket, $nsp);
+            }
             $this->emit('connect', $socket);
             $this->emit('connection', $socket);
         } else {
@@ -84,13 +84,11 @@ class Nsp extends Emitter
         }
     }
 
-
     /**
      * Removes a client. Called by each `Socket`.
      *
      * @api private
      */
-
     public function remove($socket)
     {
         // todo $socket->id
@@ -101,40 +99,43 @@ class Nsp extends Emitter
     /**
      * Emits to all clients.
      *
-     * @return {Namespace} self
-     * @api public
+     * @param null $ev
+     * @return Nsp|void {Namespace} self
+     * @api    public
      */
-
     public function emit($ev = null)
     {
         $args = func_get_args();
         if (isset(self::$events[$ev])) {
-            call_user_func_array(array(__CLASS__, 'parent::emit'), $args);
+            call_user_func_array([get_parent_class(__CLASS__), 'emit'], $args);
         } else {
             // set up packet object
 
             $parserType = Parser::EVENT; // default
             //if (self::hasBin($args)) { $parserType = Parser::BINARY_EVENT; } // binary
 
-            $packet = array('type' => $parserType, 'data' => $args);
+            $packet = ['type' => $parserType, 'data' => $args];
 
             if (is_callable(end($args))) {
                 echo ('Callbacks are not supported when broadcasting');
                 return;
             }
 
-            $this->adapter->broadcast($packet, array(
-                'rooms' => $this->rooms,
-                'flags' => $this->flags
-            ));
+            $this->adapter->broadcast(
+                $packet,
+                [
+                    'rooms' => $this->rooms,
+                    'flags' => $this->flags
+                ]
+            );
 
-            $this->rooms = array();
-            $this->flags = array();;
+            $this->rooms = [];
+            $this->flags = [];
         }
         return $this;
     }
 
-    public function send()
+    public function send(): Nsp
     {
         $args = func_get_args();
         array_unshift($args, 'message');
@@ -145,10 +146,10 @@ class Nsp extends Emitter
     public function write()
     {
         $args = func_get_args();
-        return call_user_func_array(array($this, 'send'), $args);
+        return call_user_func_array([$this, 'send'], $args);
     }
 
-    public function clients($fn)
+    public function clients($fn): Nsp
     {
         $this->adapter->clients($this->rooms, $fn);
         return $this;
@@ -157,12 +158,11 @@ class Nsp extends Emitter
     /**
      * Sets the compress flag.
      *
-     * @param {Boolean} if `true`, compresses the sending data
-     * @return {Socket} self
-     * @api public
+     * @param  {Boolean} if `true`, compresses the sending data
+     * @return Nsp {Socket} self
+     * @api    public
      */
-
-    public function compress($compress)
+    public function compress($compress): Nsp
     {
         $this->flags['compress'] = $compress;
         return $this;

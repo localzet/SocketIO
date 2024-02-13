@@ -16,11 +16,11 @@ namespace localzet\SocketIO;
 
 class DefaultAdapter
 {
-
     public $nsp = null;
-    public $rooms = array();
-    public $sids = array();
+    public $rooms = [];
+    public $sids = [];
     public $encoder = null;
+
     public function __construct($nsp)
     {
         $this->nsp = $nsp;
@@ -50,7 +50,7 @@ class DefaultAdapter
 
     public function delAll($id)
     {
-        $rooms = array_keys(isset($this->sids[$id]) ? $this->sids[$id] : array());
+        $rooms = array_keys($this->sids[$id] ?? []);
         foreach ($rooms as $room) {
             $this->del($id, $room);
         }
@@ -59,18 +59,18 @@ class DefaultAdapter
 
     public function broadcast($packet, $opts, $remote = false)
     {
-        $rooms = isset($opts['rooms']) ? $opts['rooms'] : array();
-        $except = isset($opts['except']) ? $opts['except'] : array();
-        $flags = isset($opts['flags']) ? $opts['flags'] : array();
-        $packetOpts = array(
+        $rooms = $opts['rooms'] ?? [];
+        $except = $opts['except'] ?? [];
+        $flags = $opts['flags'] ?? [];
+        $packetOpts = [
             'preEncoded' => true,
-            'volatile' => isset($flags['volatile']) ?  $flags['volatile'] : null,
-            'compress' => isset($flags['compress']) ? $flags['compress'] : null
-        );
+            'volatile' => $flags['volatile'] ?? null,
+            'compress' => $flags['compress'] ?? null
+        ];
         $packet['nsp'] = $this->nsp->name;
         $encodedPackets = $this->encoder->encode($packet);
         if ($rooms) {
-            $ids = array();
+            $ids = [];
             foreach ($rooms as $i => $room) {
                 if (!isset($this->rooms[$room])) {
                     continue;
@@ -89,10 +89,12 @@ class DefaultAdapter
             }
         } else {
             foreach ($this->sids as $id => $sid) {
-                if (isset($except[$id])) continue;
+                if (isset($except[$id])) {
+                    continue;
+                }
                 if (isset($this->nsp->connected[$id])) {
                     $socket = $this->nsp->connected[$id];
-                    $volatile = isset($flags['volatile']) ? $flags['volatile'] : null;
+                    $volatile = $flags['volatile'] ?? null;
                     $socket->packet($encodedPackets, true, $volatile);
                 }
             }
@@ -101,7 +103,7 @@ class DefaultAdapter
 
     public function clients($rooms, $fn)
     {
-        $sids = array();
+        $sids = [];
         foreach ($rooms as $room) {
             $sids = array_merge($sids, $this->rooms[$room]);
         }

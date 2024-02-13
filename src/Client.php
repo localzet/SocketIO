@@ -24,14 +24,19 @@ class Client
     public $decoder = null;
     public $id = null;
     public $request = null;
-    public $nsps = array();
-    public $connectBuffer = array();
+    public $nsps = [];
+    public $connectBuffer = [];
+    /**
+     * @var array|mixed|null
+     */
+    public $sockets;
+
     public function __construct($server, $conn)
     {
         $this->server = $server;
         $this->conn = $conn;
-        $this->encoder = new \localzet\SocketIO\Parser\Encoder();
-        $this->decoder = new \localzet\SocketIO\Parser\Decoder();
+        $this->encoder = new Encoder();
+        $this->decoder = new Decoder();
         $this->id = $conn->id;
         $this->request = $conn->request;
         $this->setup();
@@ -51,23 +56,23 @@ class Client
 
     public function setup()
     {
-        $this->decoder->on('decoded', array($this, 'ondecoded'));
-        $this->conn->on('data', array($this, 'ondata'));
-        $this->conn->on('error', array($this, 'onerror'));
-        $this->conn->on('close', array($this, 'onclose'));
+        $this->decoder->on('decoded', [$this, 'ondecoded']);
+        $this->conn->on('data', [$this, 'ondata']);
+        $this->conn->on('error', [$this, 'onerror']);
+        $this->conn->on('close', [$this, 'onclose']);
     }
 
     /**
      * Connects a client to a namespace.
      *
      * @param {String} namespace name
-     * @api private
+     * @api   private
      */
 
     public function connect($name)
     {
         if (!isset($this->server->nsps[$name])) {
-            $this->packet(array('type' => Parser::ERROR, 'nsp' => $name, 'data' => 'Invalid namespace'));
+            $this->packet(['type' => Parser::ERROR, 'nsp' => $name, 'data' => 'Invalid namespace']);
             return;
         }
         $nsp = $this->server->of($name);
@@ -75,7 +80,7 @@ class Client
             $this->connectBuffer[$name] = $name;
             return;
         }
-        $nsp->add($this, $nsp, array($this, 'nspAdd'));
+        $nsp->add($this, $nsp, [$this, 'nspAdd']);
     }
 
     public function nspAdd($socket, $nsp)
@@ -86,24 +91,21 @@ class Client
             foreach ($this->connectBuffer as $name) {
                 $this->connect($name);
             }
-            $this->connectBuffer = array();
+            $this->connectBuffer = [];
         }
     }
-
-
 
     /**
      * Disconnects from all namespaces and closes transport.
      *
      * @api private
      */
-
     public function disconnect()
     {
         foreach ($this->sockets as $socket) {
             $socket->disconnect();
         }
-        $this->sockets = array();
+        $this->sockets = [];
         $this->close();
     }
 
@@ -112,15 +114,12 @@ class Client
      *
      * @api private
      */
-
     public function remove($socket)
     {
         if (isset($this->sockets[$socket->id])) {
             $nsp = $this->sockets[$socket->id]->nsp->name;
             unset($this->sockets[$socket->id]);
             unset($this->nsps[$nsp]);
-        } else {
-            //echo('ignoring remove for '. $socket->id);
         }
     }
 
@@ -129,12 +128,12 @@ class Client
      *
      * @api private
      */
-
     public function close()
     {
-        if (empty($this->conn)) return;
+        if (empty($this->conn)) {
+            return;
+        }
         if ('open' === $this->conn->readyState) {
-            //echo('forcing transport close');
             $this->conn->close();
             $this->onclose('forced server close');
         }
@@ -145,7 +144,7 @@ class Client
      *
      * @param {Object} packet object
      * @param {Object} options
-     * @api private
+     * @api   private
      */
     public function packet($packet, $preEncoded = false, $volatile = false)
     {
@@ -157,36 +156,36 @@ class Client
             } else { // a broadcast pre-encodes a packet
                 $this->writeToEngine($packet);
             }
-        } else {
-            // todo check
-            // echo('ignoring packet write ' . var_export($packet, true));
         }
     }
 
-    public function  writeToEngine($encodedPackets, $volatile = false)
+    public function writeToEngine($encodedPackets, $volatile = false)
     {
-        if ($volatile) echo new \Exception('volatile');
-        if ($volatile && !$this->conn->transport->writable) return;
-        // todo check
-        if (isset($encodedPackets['nsp'])) unset($encodedPackets['nsp']);
+        if ($volatile) {
+            echo new Exception('volatile');
+        }
+        if ($volatile && !$this->conn->transport->writable) {
+            return;
+        }
+        if (isset($encodedPackets['nsp'])) {
+            unset($encodedPackets['nsp']);
+        }
         foreach ($encodedPackets as $packet) {
             $this->conn->write($packet);
         }
     }
-
 
     /**
      * Called with incoming transport data.
      *
      * @api private
      */
-
     public function ondata($data)
     {
         try {
-            // todo chek '2["chat message","2"]' . "\0" . '' 
+            // todo chek '2["chat message","2"]' . "\0" . ''
             $this->decoder->add(trim($data));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->onerror($e);
         }
     }
@@ -196,7 +195,6 @@ class Client
      *
      * @api private
      */
-
     public function ondecoded($packet)
     {
         if (Parser::CONNECT == $packet['type']) {
@@ -204,8 +202,6 @@ class Client
         } else {
             if (isset($this->nsps[$packet['nsp']])) {
                 $this->nsps[$packet['nsp']]->onpacket($packet);
-            } else {
-                //echo('no socket for namespace ' . $packet['nsp']);
             }
         }
     }
@@ -214,9 +210,8 @@ class Client
      * Handles an error.
      *
      * @param {Objcet} error object
-     * @api private
+     * @api   private
      */
-
     public function onerror($err)
     {
         foreach ($this->sockets as $socket) {
@@ -229,12 +224,13 @@ class Client
      * Called upon transport close.
      *
      * @param {String} reason
-     * @api private
+     * @api   private
      */
-
     public function onclose($reason)
     {
-        if (empty($this->conn)) return;
+        if (empty($this->conn)) {
+            return;
+        }
         // ignore a potential subsequent `close` event
         $this->destroy();
 
@@ -250,10 +246,11 @@ class Client
      *
      * @api private
      */
-
     public function destroy()
     {
-        if (!$this->conn) return;
+        if (!$this->conn) {
+            return;
+        }
         $this->conn->removeAllListeners();
         $this->decoder->removeAllListeners();
         $this->encoder->removeAllListeners();
