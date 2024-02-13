@@ -14,7 +14,7 @@
 
 namespace localzet\SocketIO;
 
-use localzet\Core\Server;
+use localzet\Server\Server;
 use localzet\SocketIO\Engine\Engine;
 
 class SocketIO

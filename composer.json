@@ -28,7 +28,7 @@
     },
     "require": {
         "php": ">=7.4",
-        "localzet/core": ">=1.0.0",
+        "localzet/server": "^4.1",
         "localzet/channel": ">=1.0.0"
     },
     "autoload": {

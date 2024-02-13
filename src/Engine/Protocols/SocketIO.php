@@ -17,7 +17,7 @@ namespace localzet\SocketIO\Engine\Protocols;
 use \localzet\SocketIO\Engine\Protocols\WebSocket;
 use \localzet\SocketIO\Engine\Protocols\Http\Request;
 use \localzet\SocketIO\Engine\Protocols\Http\Response;
-use \localzet\Core\Connection\TcpConnection;
+use \localzet\Server\Connection\TcpConnection;
 
 class SocketIO
 {

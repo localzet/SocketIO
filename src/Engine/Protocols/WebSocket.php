@@ -17,7 +17,7 @@ namespace localzet\SocketIO\Engine\Protocols;
 use \localzet\SocketIO\Engine\Protocols\Http\Request;
 use \localzet\SocketIO\Engine\Protocols\Http\Response;
 use \localzet\SocketIO\Engine\Protocols\WebSocket\RFC6455;
-use \localzet\Core\Connection\TcpConnection;
+use \localzet\Server\Connection\TcpConnection;
 
 /**
  * WebSocket

@@ -15,7 +15,7 @@
 namespace localzet\SocketIO\Engine;
 
 use \localzet\SocketIO\Event\Emitter;
-use \localzet\Core\Lib\Timer;
+use \localzet\Server\Lib\Timer;
 use \localzet\SocketIO\Debug;
 
 class Socket extends Emitter

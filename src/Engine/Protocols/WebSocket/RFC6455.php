@@ -14,28 +14,33 @@
 
 namespace localzet\SocketIO\Engine\Protocols\WebSocket;
 
-use localzet\Core\Connection\ConnectionInterface;
+use localzet\Server\Connection\ConnectionInterface;
+use localzet\Server\Connection\TcpConnection;
+use localzet\Server\Protocols\ProtocolInterface;
 
 /**
  * WebSocket 协议服务端解包和打包
  */
-class RFC6455 implements \localzet\Core\Protocols\ProtocolInterface
+class RFC6455 implements ProtocolInterface
 {
     /**
      * websocket头部最小长度
+     *
      * @var int
      */
     const MIN_HEAD_LEN = 6;
 
     /**
      * websocket blob类型
-     * @var char
+     *
+     * @var string
      */
     const BINARY_TYPE_BLOB = "\x81";
 
     /**
      * websocket arraybuffer类型
-     * @var char
+     *
+     * @var string
      */
     const BINARY_TYPE_ARRAYBUFFER = "\x82";
 
@@ -43,7 +48,7 @@ class RFC6455 implements \localzet\Core\Protocols\ProtocolInterface
      * 检查包的完整性
      * @param string $buffer
      */
-    public static function input($buffer, ConnectionInterface $connection)
+    public static function input(string $buffer, ConnectionInterface $connection): bool|int
     {
         // 数据长度
         $recv_len = strlen($buffer);
@@ -167,12 +172,7 @@ class RFC6455 implements \localzet\Core\Protocols\ProtocolInterface
         }
     }
 
-    /**
-     * 打包
-     * @param string $buffer
-     * @return string
-     */
-    public static function encode($buffer, ConnectionInterface $connection)
+    public static function encode(mixed $buffer, ConnectionInterface $connection): string
     {
         $len = strlen($buffer);
         if (empty($connection->websocketHandshake)) {
@@ -184,7 +184,7 @@ class RFC6455 implements \localzet\Core\Protocols\ProtocolInterface
 
         if ($len <= 125) {
             $encode_buffer = $first_byte . chr($len) . $buffer;
-        } else if ($len <= 65535) {
+        } elseif ($len <= 65535) {
             $encode_buffer = $first_byte . chr(126) . pack("n", $len) . $buffer;
         } else {
             $encode_buffer = $first_byte . chr(127) . pack("xxxxN", $len) . $buffer;
@@ -204,19 +204,14 @@ class RFC6455 implements \localzet\Core\Protocols\ProtocolInterface
         return $encode_buffer;
     }
 
-    /**
-     * 解包
-     * @param string $buffer
-     * @return string
-     */
     public static function decode($buffer, ConnectionInterface $connection)
     {
-        $len = $masks = $data = $decoded = null;
+        $masks = $data = $decoded = null;
         $len = ord($buffer[1]) & 127;
         if ($len === 126) {
             $masks = substr($buffer, 4, 4);
             $data = substr($buffer, 8);
-        } else if ($len === 127) {
+        } elseif ($len === 127) {
             $masks = substr($buffer, 10, 4);
             $data = substr($buffer, 14);
         } else {
@@ -236,22 +231,16 @@ class RFC6455 implements \localzet\Core\Protocols\ProtocolInterface
         }
     }
 
-    /**
-     * 处理websocket握手
-     * @param string $buffer
-     * @param TcpConnection $connection
-     * @return int
-     */
     public static function dealHandshake($connection, $req, $res)
     {
-        $headers = array();
+        $headers = [];
         if (isset($connection->onWebSocketConnect)) {
             try {
-                call_user_func_array($connection->onWebSocketConnect, array($connection, $req, $res));
+                call_user_func_array($connection->onWebSocketConnect, [$connection, $req, $res]);
             } catch (\Exception $e) {
                 echo $e;
             }
-            if (!$res->writable) {
+            if (! $res->writable) {
                 return false;
             }
         }
@@ -285,7 +274,7 @@ class RFC6455 implements \localzet\Core\Protocols\ProtocolInterface
         $res->end();
 
         // 握手后有数据要发送
-        if (!empty($connection->websocketTmpData)) {
+        if (! empty($connection->websocketTmpData)) {
             $connection->send($connection->websocketTmpData, true);
             $connection->websocketTmpData = '';
         }
