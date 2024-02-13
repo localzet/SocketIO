@@ -25,11 +25,15 @@ use \localzet\Server\Connection\TcpConnection;
 class WebSocket
 {
     /**
+     * 最小包头
+     *
      * @var int
      */
     const MIN_HEAD_LEN = 7;
 
     /**
+     * 检查包的完整性
+     *
      * @param string $buffer
      */
     public static function input($buffer, $connection)
@@ -57,14 +61,14 @@ class WebSocket
         $res = new Response($connection);
         $connection->consumeRecvBuffer(strlen($buffer));
         return self::dealHandshake($connection, $req, $res);
-        $connection->consumeRecvBuffer($pos + 4);
-        return 0;
     }
 
     /**
      * 处理websocket握手
-     * @param string $buffer
+     *
      * @param TcpConnection $connection
+     * @param $req
+     * @param $res
      * @return int
      */
     public static function dealHandshake($connection, $req, $res)
