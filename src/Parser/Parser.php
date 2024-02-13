@@ -65,7 +65,7 @@ class Parser
      */
     const BINARY_ACK = 6;
 
-    public static $types = array(
+    public static $types = [
         'CONNECT',
         'DISCONNECT',
         'EVENT',
@@ -73,5 +73,5 @@ class Parser
         'ACK',
         'BINARY_ACK',
         'ERROR'
-    );
+    ];
 }
