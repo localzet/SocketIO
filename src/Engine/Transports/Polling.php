@@ -3,20 +3,19 @@
 /**
  * @package     SocketIO Engine
  * @link        https://localzet.gitbook.io
- * 
+ *
  * @author      localzet <creator@localzet.ru>
- * 
- * @copyright   Copyright (c) 2018-2020 Zorin Projects 
+ *
+ * @copyright   Copyright (c) 2018-2020 Zorin Projects
  * @copyright   Copyright (c) 2020-2022 NONA Team
- * 
+ *
  * @license     https://www.localzet.ru/license GNU GPLv3 License
  */
 
 namespace localzet\SocketIO\Engine\Transports;
 
-use localzet\SocketIO\Engine\Transport;
 use localzet\SocketIO\Engine\Parser;
-use \localzet\SocketIO\Debug;
+use localzet\SocketIO\Engine\Transport;
 
 class Polling extends Transport
 {
@@ -60,7 +59,7 @@ class Polling extends Transport
         $this->emit('drain');
 
         if ($this->writable && $this->shouldClose) {
-            echo ('triggering empty send to append close packet');
+            echo('triggering empty send to append close packet');
             $this->send([['type' => 'noop']]);
         }
     }
@@ -156,7 +155,7 @@ class Polling extends Transport
     {
         $this->writable = false;
         if ($this->shouldClose) {
-            echo ('appending close packet to payload');
+            echo('appending close packet to payload');
             $packets[] = ['type' => 'close'];
             call_user_func($this->shouldClose);
             $this->shouldClose = null;

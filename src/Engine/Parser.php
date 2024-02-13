@@ -3,18 +3,18 @@
 /**
  * @package     SocketIO Engine
  * @link        https://localzet.gitbook.io
- * 
+ *
  * @author      localzet <creator@localzet.ru>
- * 
- * @copyright   Copyright (c) 2018-2020 Zorin Projects 
+ *
+ * @copyright   Copyright (c) 2018-2020 Zorin Projects
  * @copyright   Copyright (c) 2020-2022 NONA Team
- * 
+ *
  * @license     https://www.localzet.ru/license GNU GPLv3 License
  */
 
 namespace localzet\SocketIO\Engine;
 
-use \localzet\SocketIO\Debug;
+use localzet\SocketIO\Debug;
 
 class Parser
 {
@@ -232,7 +232,7 @@ class Parser
         while (strlen($bufferTail) > 0) {
             $strLen = '';
             $numberTooLong = false;
-            for ($i = 1;; $i++) {
+            for ($i = 1; ; $i++) {
                 $tail = ord($bufferTail[$i]);
                 if ($tail === 255) {
                     break;

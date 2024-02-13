@@ -3,12 +3,12 @@
 /**
  * @package     SocketIO Engine
  * @link        https://localzet.gitbook.io
- * 
+ *
  * @author      localzet <creator@localzet.ru>
- * 
- * @copyright   Copyright (c) 2018-2020 Zorin Projects 
+ *
+ * @copyright   Copyright (c) 2018-2020 Zorin Projects
  * @copyright   Copyright (c) 2020-2022 NONA Team
- * 
+ *
  * @license     https://www.localzet.ru/license GNU GPLv3 License
  */
 
@@ -113,7 +113,7 @@ class Socket extends Emitter
                 if ($this->_rooms || isset($flags['broadcast'])) {
                     throw new Exception('Callbacks are not supported when broadcasting');
                 }
-                echo ('emitting packet with ack id ' . $this->nsp->ids);
+                echo('emitting packet with ack id ' . $this->nsp->ids);
                 $this->acks[$this->nsp->ids] = array_pop($args);
                 $packet['id'] = $this->nsp->ids++;
             }
@@ -341,7 +341,7 @@ class Socket extends Emitter
             call_user_func($ack, $packet['data']);
             unset($this->acks[$packet['id']]);
         } else {
-            echo ('bad ack ' . $packet['id']);
+            echo('bad ack ' . $packet['id']);
         }
     }
 
