@@ -44,16 +44,13 @@ class PollingXHR extends Polling
     public function doWrite($data)
     {
         // explicit UTF-8 is required for pages not served under utf todo
-        //$content_type = $isString
-        //    ? 'text/plain; charset=UTF-8'
-        //    : 'application/octet-stream';
         $content_type = preg_match('/^\d+:/', $data) ? 'text/plain; charset=UTF-8' : 'application/octet-stream';
         $content_length = strlen($data);
-        $headers = array(
+        $headers = [
             'Content-Type' => $content_type,
             'Content-Length' => $content_length,
             'X-XSS-Protection' => '0',
-        );
+        ];
         if (empty($this->res)) {
             echo new \Exception('empty this->res');
             return;
@@ -62,7 +59,7 @@ class PollingXHR extends Polling
         $this->res->end($data);
     }
 
-    public function headers($req, $headers = array())
+    public function headers(object $req, array $headers = []): array
     {
         if (isset($req->headers['origin'])) {
             $headers['Access-Control-Allow-Credentials'] = 'true';
