@@ -32,6 +32,10 @@ class Request
 
     public $connection = null;
 
+    public $res = null;
+
+    public $cleanup = null;
+
     public function __construct($connection, $raw_head)
     {
         $this->connection = $connection;

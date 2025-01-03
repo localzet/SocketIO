@@ -33,6 +33,8 @@ class Socket extends Emitter
     public $acks = [];
     public $connected = true;
     public $disconnected = false;
+    public $addedUser = null;
+    public $username = null;
 
     public static $events = [
         'error' => 'error',

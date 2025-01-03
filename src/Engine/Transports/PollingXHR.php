@@ -19,6 +19,8 @@ use localzet\SocketIO\Debug;
 
 class PollingXHR extends Polling
 {
+    public $sid = null;
+
     public function __construct()
     {
         Debug::debug('PollingXHR __construct');
