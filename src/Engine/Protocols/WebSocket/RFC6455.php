@@ -5,6 +5,9 @@
  * @link        https://localzet.gitbook.io
  *
  * @author      localzet <creator@localzet.ru>
+ * @author      Ivan Zorin <creator@localzet.com>
+ * @link        https://github.com/localzet/SocketIO
+ * @copyright   Copyright (c) 2026 Localzet Group
  *
  * @copyright   Copyright (c) 2018-2020 Zorin Projects
  * @copyright   Copyright (c) 2020-2022 NONA Team
@@ -45,7 +48,7 @@ class RFC6455 implements ProtocolInterface
      * 检查包的完整性
      * @param string $buffer
      */
-    public static function input(string $buffer, ConnectionInterface $connection): bool|int
+    public static function input(string $buffer, ConnectionInterface $connection): int
     {
         // 数据长度
         $recv_len = strlen($buffer);
@@ -197,7 +200,7 @@ class RFC6455 implements ProtocolInterface
         return $encode_buffer;
     }
 
-    public static function decode($buffer, ConnectionInterface $connection)
+    public static function decode(string $buffer, ConnectionInterface $connection): mixed
     {
         $masks = $data = $decoded = null;
         $len = ord($buffer[1]) & 127;
