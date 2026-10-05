@@ -1,21 +1,45 @@
-<p align="center"><a href="https://www.localzet.com" target="_blank">
-  <img src="https://static.zorin.space/media/logos/ZorinProjectsSP.svg" width="400">
-</a></p>
+# Localzet SocketIO
 
-<p align="center">
-  <a href="https://packagist.org/packages/localzet/socket">
-  <img src="https://img.shields.io/packagist/dt/localzet/socket?label=%D0%A1%D0%BA%D0%B0%D1%87%D0%B8%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F" alt="Скачивания">
-</a>
-  <a href="https://github.com/localzet/SocketIO">
-  <img src="https://img.shields.io/github/commit-activity/t/localzet/SocketIO?label=%D0%9A%D0%BE%D0%BC%D0%BC%D0%B8%D1%82%D1%8B" alt="Коммиты">
-</a>
-  <a href="https://packagist.org/packages/localzet/socket">
-  <img src="https://img.shields.io/packagist/v/localzet/socket?label=%D0%92%D0%B5%D1%80%D1%81%D0%B8%D1%8F" alt="Версия">
-</a>
-  <a href="https://packagist.org/packages/localzet/socket">
-  <img src="https://img.shields.io/packagist/dependency-v/localzet/socket/php?label=PHP" alt="Версия PHP">
-</a>
-  <a href="https://github.com/localzet/SocketIO">
-  <img src="https://img.shields.io/github/license/localzet/SocketIO?label=%D0%9B%D0%B8%D1%86%D0%B5%D0%BD%D0%B7%D0%B8%D1%8F" alt="Лицензия">
-</a>
-</p>
+[Русская документация](README.ru.md)
+
+A Socket.IO server implementation for Localzet Server.
+
+## Status and compatibility
+
+The localzet/channel dependency is abandoned. Migration to Tunnel requires compatibility tests. This source includes a global Emitter class with an explicit compatibility classmap; modern Socket.IO client compatibility, protocol limits and cross-process delivery are not established by syntax checks.
+
+This is a Server 4.x component; Server 7.x compatibility is not established.
+
+## Dependencies
+
+- `php`: `>=8.1`
+- `localzet/server`: `^4.1`
+- `localzet/channel`: `>=1.0.0`
+
+## Installation
+
+```sh
+composer require localzet/socketio
+```
+
+## Development checks
+
+```sh
+composer validate --strict
+composer install
+composer dump-autoload --optimize --strict-psr
+composer lint
+composer test
+composer audit --abandoned=report
+```
+
+Installation, lint and autoload checks do not establish end-to-end behavior or production readiness.
+
+[Historical usage notes](docs/legacy-readme.md) need verification against the current API.
+
+## Author and license
+
+Ivan Zorin (`localzet`), <creator@localzet.com>, https://www.localzet.com.
+Source: https://github.com/localzet/SocketIO. AGPL-3.0-or-later; [LICENSE](LICENSE). Original copyright and third-party licenses remain applicable.
+
+[Authors](.github/AUTHORS.md) · [Contributing](.github/CONTRIBUTING.md) · [Security](.github/SECURITY.md)

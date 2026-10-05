@@ -1,5 +1,5 @@
 # Contributor Covenant Code of Conduct
-[Документ на русском языке](.github/CODE_OF_CONDUCT_ru.md)
+[Документ на русском языке](CODE_OF_CONDUCT_ru.md)
 
 ## Our Pledge
 
