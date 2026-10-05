@@ -1,39 +1,46 @@
 {
-    "name": "localzet/socketio",
-    "description": "Localzet SocketIO is a PHP SocketIO library developed by Localzet. It provides functionality for real-time bidirectional event-based communication.",
-    "type": "library",
-    "keywords": [
-        "SocketIO",
-        "PHP",
-        "library",
-        "localzet",
-        "GPL",
-        "real-time",
-        "communication",
-        "event-based"
-    ],
-    "license": "AGPL-3.0-or-later",
-    "authors": [
-        {
-            "role": "Developer",
-            "name": "Ivan Zorin",
-            "email": "creator@localzet.com",
-            "homepage": "https://github.com/localzet"
-        }
-    ],
-    "support": {
-        "email": "support@localzet.com",
-        "issues": "https://github.com/localzet/SocketIO/issues",
-        "source": "https://github.com/localzet/SocketIO"
-    },
-    "require": {
-        "php": ">=7.4",
-        "localzet/server": "^4.1",
-        "localzet/channel": ">=1.0.0"
-    },
-    "autoload": {
-        "psr-4": {
-            "localzet\\SocketIO\\": "src/"
-        }
+  "name": "localzet/socketio",
+  "description": "A Socket.IO server implementation for Localzet Server.",
+  "type": "library",
+  "keywords": [
+    "SocketIO",
+    "PHP",
+    "library",
+    "localzet",
+    "GPL",
+    "real-time",
+    "communication",
+    "event-based"
+  ],
+  "license": "AGPL-3.0-or-later",
+  "authors": [
+    {
+      "role": "Developer",
+      "name": "Ivan Zorin",
+      "email": "creator@localzet.com",
+      "homepage": "https://github.com/localzet"
     }
+  ],
+  "support": {
+    "email": "support@localzet.com",
+    "issues": "https://github.com/localzet/SocketIO/issues",
+    "source": "https://github.com/localzet/SocketIO"
+  },
+  "require": {
+    "php": ">=8.1",
+    "localzet/server": "^4.1",
+    "localzet/channel": "^1.0 || ^2.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "localzet\\SocketIO\\": "src/"
+    },
+    "classmap": [
+      "src/Emitter.php"
+    ]
+  },
+  "scripts": {
+    "test": "php tests/regression.php",
+    "lint": "find . -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l"
+  }
 }
