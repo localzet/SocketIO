@@ -1,18 +1,32 @@
 <?php
 
 /**
- * @package     SocketIO Engine
- * @link        https://localzet.gitbook.io
+ * @package     Localzet Socket.IO
+ * @link        https://github.com/localzet/SocketIO
  *
- * @author      localzet <creator@localzet.ru>
+ * @author      Ivan Zorin <creator@localzet.com>
+ * @copyright   Copyright © 2016-2026 Localzet Group. All rights reserved.
+ * @license     https://www.gnu.org/licenses/agpl-3.0 GNU Affero General Public License v3.0
  *
- * @copyright   Copyright (c) 2018-2020 Zorin Projects
- * @copyright   Copyright (c) 2020-2022 NONA Team
+ *              This program is free software: you can redistribute it and/or modify
+ *              it under the terms of the GNU Affero General Public License as published
+ *              by the Free Software Foundation, either version 3 of the License, or
+ *              (at your option) any later version.
  *
- * @license     https://www.localzet.ru/license GNU GPLv3 License
- */
+ *              This program is distributed in the hope that it will be useful,
+ *              but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *              MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *              GNU Affero General Public License for more details.
+ *
+ *              You should have received a copy of the GNU Affero General Public License
+ *              along with this program. If not, see <https://www.gnu.org/licenses/>.
+ *
+ *              For any questions, please contact <creator@localzet.com>
+*/
 
 namespace localzet\SocketIO;
+
+use localzet\Tunnel\Client as TunnelClient;
 
 class ChannelAdapter extends DefaultAdapter
 {
@@ -29,9 +43,9 @@ class ChannelAdapter extends DefaultAdapter
     {
         parent::__construct($nsp);
         $this->_channelId = (function_exists('random_int') ? random_int(1, 10000000) : rand(1, 10000000)) . "-" . (function_exists('posix_getpid') ? posix_getpid() : 1);
-        \Channel\Client::connect(self::$ip, self::$port);
-        \Channel\Client::$onMessage = [$this, 'onChannelMessage'];
-        \Channel\Client::subscribe("socket.io#/#");
+        TunnelClient::$onMessage = [$this, 'onTunnelMessage'];
+        TunnelClient::connect('frame://' . self::$ip . ':' . self::$port);
+        TunnelClient::on('socket.io#/#', [$this, 'onTunnelMessage']);
         Debug::debug('ChannelAdapter __construct');
     }
 
@@ -45,7 +59,7 @@ class ChannelAdapter extends DefaultAdapter
         $this->sids[$id][$room] = true;
         $this->rooms[$room][$id] = true;
         $channel = "socket.io#/#$room#";
-        \Channel\Client::subscribe($channel);
+        TunnelClient::subscribe($channel);
     }
 
     public function del($id, $room)
@@ -55,7 +69,7 @@ class ChannelAdapter extends DefaultAdapter
         if (empty($this->rooms[$room])) {
             unset($this->rooms[$room]);
             $channel = "socket.io#/#$room#";
-            \Channel\Client::unsubscribe($channel);
+            TunnelClient::unsubscribe($channel);
         }
     }
 
@@ -67,7 +81,7 @@ class ChannelAdapter extends DefaultAdapter
                 if (isset($this->rooms[$room][$id])) {
                     unset($this->rooms[$room][$id]);
                     $channel = "socket.io#/#$room#";
-                    \Channel\Client::unsubscribe($channel);
+                    TunnelClient::unsubscribe($channel);
                 }
                 if (isset($this->rooms[$room]) && empty($this->rooms[$room])) {
                     unset($this->rooms[$room]);
@@ -104,6 +118,11 @@ class ChannelAdapter extends DefaultAdapter
         $this->broadcast($packet, $opts, true);
     }
 
+    public function onTunnelMessage($msg): void
+    {
+        $this->onChannelMessage('socket.io#/#', $msg);
+    }
+
     public function broadcast($packet, $opts, $remote = false)
     {
         parent::broadcast($packet, $opts);
@@ -114,12 +133,12 @@ class ChannelAdapter extends DefaultAdapter
                 foreach ($opts['rooms'] as $room) {
                     $chn = "socket.io#/#$room#";
                     $msg = [$this->_channelId, $packet, $opts];
-                    \Channel\Client::publish($chn, $msg);
+                    TunnelClient::publish($chn, $msg);
                 }
             } else {
                 $chn = "socket.io#/#";
                 $msg = [$this->_channelId, $packet, $opts];
-                \Channel\Client::publish($chn, $msg);
+                TunnelClient::publish($chn, $msg);
             }
         }
     }

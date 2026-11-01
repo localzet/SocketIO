@@ -6,15 +6,15 @@ A Socket.IO server implementation for Localzet Server.
 
 ## Status and compatibility
 
-The localzet/channel dependency is abandoned. Migration to Tunnel requires compatibility tests. This source includes a global Emitter class with an explicit compatibility classmap; modern Socket.IO client compatibility, protocol limits and cross-process delivery are not established by syntax checks.
+Cross-process delivery uses Localzet Tunnel. The included global Emitter class has an explicit compatibility classmap. Modern Socket.IO client compatibility, protocol limits and cross-process delivery require integration testing before production use.
 
-This is a Server 4.x component; Server 7.x compatibility is not established.
+This release targets Localzet Server 7.x. Server 4.x must use a compatible SocketIO release.
 
 ## Dependencies
 
 - `php`: `>=8.1`
-- `localzet/server`: `^4.1`
-- `localzet/channel`: `>=1.0.0`
+- `localzet/server`: `^7.0`
+- `localzet/tunnel`: `^2.0`
 
 ## Installation
 
