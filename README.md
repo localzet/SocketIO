@@ -6,7 +6,7 @@ A Socket.IO server implementation for Localzet Server.
 
 ## Status and compatibility
 
-Cross-process delivery uses Localzet Tunnel. The included global Emitter class has an explicit compatibility classmap. Modern Socket.IO client compatibility, protocol limits and cross-process delivery require integration testing before production use.
+The default in-memory adapter works without Tunnel. Cross-process delivery uses the optional Localzet Tunnel ChannelAdapter; published Tunnel 2.x releases target Server 4.x, so a Server 7-compatible Tunnel release is required before enabling this adapter. The included global Emitter class has an explicit compatibility classmap. Modern Socket.IO client compatibility, protocol limits and cross-process delivery require integration testing before production use.
 
 This release targets Localzet Server 7.x. Server 4.x must use a compatible SocketIO release.
 
@@ -14,7 +14,7 @@ This release targets Localzet Server 7.x. Server 4.x must use a compatible Socke
 
 - `php`: `>=8.1`
 - `localzet/server`: `^7.0`
-- `localzet/tunnel`: `^2.0`
+- `localzet/tunnel`: optional; required only for cross-process `ChannelAdapter`, and a Server 7-compatible release is not yet published.
 
 ## Installation
 

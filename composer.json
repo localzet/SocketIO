@@ -28,8 +28,10 @@
   },
   "require": {
     "php": ">=8.1",
-    "localzet/server": "^7.0",
-    "localzet/tunnel": "^2.0"
+    "localzet/server": "^7.0"
+  },
+  "suggest": {
+    "localzet/tunnel": "Required by the cross-process ChannelAdapter; use a release compatible with Server 7 when available."
   },
   "autoload": {
     "psr-4": {
