@@ -6,7 +6,7 @@ A Socket.IO server implementation for Localzet Server.
 
 ## Status and compatibility
 
-The default in-memory adapter works without Tunnel. Cross-process delivery uses the optional Localzet Tunnel ChannelAdapter; published Tunnel 2.x releases target Server 4.x, so a Server 7-compatible Tunnel release is required before enabling this adapter. The included global Emitter class has an explicit compatibility classmap. Modern Socket.IO client compatibility, protocol limits and cross-process delivery require integration testing before production use.
+The default in-memory adapter works without Tunnel. Cross-process delivery uses the optional Localzet Tunnel ChannelAdapter; published Tunnel 2.x releases target Server 4.x, so do not enable this adapter with Server 7 until a compatible Tunnel release is available. The included global Emitter class has an explicit compatibility classmap. A local polling handshake, namespace connection and event echo are covered by integration tests; WebSocket upgrades and cross-process delivery still need end-to-end verification before production use.
 
 This release targets Localzet Server 7.x. Server 4.x must use a compatible SocketIO release.
 
@@ -33,6 +33,7 @@ composer install
 composer dump-autoload --optimize --strict-psr
 composer lint
 composer test
+composer test:integration
 composer audit --abandoned=report
 ```
 

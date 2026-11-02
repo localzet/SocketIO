@@ -6,7 +6,7 @@
 
 ## Состояние и совместимость
 
-Адаптер по умолчанию хранит состояние в памяти и работает без Tunnel. Для межпроцессной доставки нужен необязательный Localzet Tunnel ChannelAdapter; опубликованные выпуски Tunnel 2.x рассчитаны на Server 4.x, поэтому для Server 7 требуется совместимый выпуск Tunnel. Глобальный класс Emitter подключается явной classmap для совместимости. Совместимость с современными клиентами Socket.IO, ограничения протокола и межпроцессная доставка требуют интеграционных проверок до эксплуатации.
+Адаптер по умолчанию хранит состояние в памяти и работает без Tunnel. Для межпроцессной доставки нужен необязательный Localzet Tunnel ChannelAdapter; опубликованные выпуски Tunnel 2.x рассчитаны на Server 4.x, поэтому не включайте этот адаптер с Server 7 до выхода совместимого Tunnel. Глобальный класс Emitter подключается явной classmap для совместимости. Интеграционный тест проверяет polling handshake, подключение namespace и echo события; WebSocket upgrade и межпроцессная доставка требуют сквозной проверки до эксплуатации.
 
 Эта версия рассчитана на Localzet Server 7.x. Для Server 4.x используйте совместимый выпуск SocketIO.
 
@@ -33,6 +33,7 @@ composer install
 composer dump-autoload --optimize --strict-psr
 composer lint
 composer test
+composer test:integration
 composer audit --abandoned=report
 ```
 

@@ -44,6 +44,7 @@
   },
   "scripts": {
     "test": "php tests/regression.php",
+    "test:integration": "python3 tests/loopback_integration.py",
     "lint": "find . -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l"
   }
 }
