@@ -27,6 +27,8 @@
 namespace localzet\SocketIO;
 
 use localzet\SocketIO\Parser\Parser;
+use localzet\SocketIO\Parser\Decoder;
+use localzet\SocketIO\Parser\Encoder;
 
 class Client
 {

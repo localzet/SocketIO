@@ -243,7 +243,7 @@ class Socket extends Emitter
         Timer::del($this->pingTimeoutTimer);
     }
 
-    public function onClose(string $reason = '', ?string $description = null): void
+    public function onClose(string $reason = '', string|array|null $description = null): void
     {
         if ('closed' !== $this->readyState) {
             Timer::del($this->pingTimeoutTimer);

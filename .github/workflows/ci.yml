@@ -22,4 +22,5 @@ jobs:
       - run: composer install --no-interaction --prefer-dist
       - run: composer lint
       - run: composer test
+      - run: composer test:integration
       - run: composer audit --abandoned=report
