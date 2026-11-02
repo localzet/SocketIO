@@ -31,6 +31,7 @@ use localzet\Tunnel\Client as TunnelClient;
 class ChannelAdapter extends DefaultAdapter
 {
     protected $_channelId = null;
+    protected bool $tunnelInitialized = false;
 
     public static $ip = '127.0.0.1';
 
@@ -43,9 +44,18 @@ class ChannelAdapter extends DefaultAdapter
     {
         parent::__construct($nsp);
         $this->_channelId = (function_exists('random_int') ? random_int(1, 10000000) : rand(1, 10000000)) . "-" . (function_exists('posix_getpid') ? posix_getpid() : 1);
+    }
+
+    protected function initializeTunnel(): void
+    {
+        if ($this->tunnelInitialized) {
+            return;
+        }
+
         TunnelClient::$onMessage = [$this, 'onTunnelMessage'];
         TunnelClient::connect('frame://' . self::$ip . ':' . self::$port);
         TunnelClient::on('socket.io#/#', [$this, 'onTunnelMessage']);
+        $this->tunnelInitialized = true;
         Debug::debug('ChannelAdapter __construct');
     }
 
@@ -56,6 +66,7 @@ class ChannelAdapter extends DefaultAdapter
 
     public function add($id, $room)
     {
+        $this->initializeTunnel();
         $this->sids[$id][$room] = true;
         $this->rooms[$room][$id] = true;
         $channel = "socket.io#/#$room#";
@@ -93,6 +104,10 @@ class ChannelAdapter extends DefaultAdapter
 
     public function onChannelMessage($channel, $msg)
     {
+        if (!is_array($msg) || count($msg) !== 3 || !is_array($msg[1]) || !is_array($msg[2])) {
+            return;
+        }
+
         if ($this->_channelId === array_shift($msg)) {
             return;
         }
@@ -115,6 +130,7 @@ class ChannelAdapter extends DefaultAdapter
             return;
         }
 
+        unset($opts['except']);
         $this->broadcast($packet, $opts, true);
     }
 
@@ -127,6 +143,7 @@ class ChannelAdapter extends DefaultAdapter
     {
         parent::broadcast($packet, $opts);
         if (!$remote) {
+            $this->initializeTunnel();
             $packet['nsp'] = '/';
 
             if (!empty($opts['rooms'])) {

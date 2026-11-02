@@ -6,15 +6,15 @@ A Socket.IO server implementation for Localzet Server.
 
 ## Status and compatibility
 
-The default in-memory adapter works without Tunnel. Cross-process delivery uses the optional Localzet Tunnel ChannelAdapter; published Tunnel 2.x releases target Server 4.x, so do not enable this adapter with Server 7 until a compatible Tunnel release is available. The included global Emitter class has an explicit compatibility classmap. Local integration tests cover polling and WebSocket handshakes, namespace connection and event echo; cross-process delivery still needs end-to-end verification before production use.
+The development branch targets Localzet Server 7. The default in-memory adapter works without Tunnel. Cross-process broadcasts use the optional Tunnel `ChannelAdapter`, compatible with Tunnel 3.x. The global `Emitter` class is included through an explicit Composer classmap. Integration tests cover Engine.IO polling, WebSocket handshakes, namespace connections, event echo and a broadcast across two Socket.IO processes through a live Tunnel broker.
 
-This release targets Localzet Server 7.x. Server 4.x must use a compatible SocketIO release.
+This is a breaking release line for Server 7. Applications on Server 4 must stay on a compatible SocketIO release.
 
 ## Dependencies
 
 - `php`: `>=8.1`
 - `localzet/server`: `^7.0`
-- `localzet/tunnel`: optional; required only for cross-process `ChannelAdapter`, and a Server 7-compatible release is not yet published.
+- `localzet/tunnel`: optional at runtime; required for cross-process `ChannelAdapter`. Version `^3.0` targets Server 7.
 
 ## Installation
 
@@ -38,6 +38,8 @@ composer audit --abandoned=report
 ```
 
 Installation, lint and autoload checks do not establish end-to-end behavior or production readiness.
+
+The cross-process test starts one Tunnel broker and two independent Socket.IO server processes, connects a client to each server, and verifies that a broadcast from the first reaches the second. It does not cover broker failover, persistence, authentication or delivery during network interruption.
 
 [Historical usage notes](docs/legacy-readme.md) need verification against the current API.
 

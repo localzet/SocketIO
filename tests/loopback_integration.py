@@ -25,9 +25,9 @@ def free_port():
         return listener.getsockname()[1]
 
 
-def request(url, data=None):
+def request(url, data=None, timeout=3):
     req = urllib.request.Request(url, data=data, headers={'Content-Type': 'text/plain;charset=UTF-8'})
-    with urllib.request.urlopen(req, timeout=3) as response:
+    with urllib.request.urlopen(req, timeout=timeout) as response:
         return response.status, response.read().decode()
 
 

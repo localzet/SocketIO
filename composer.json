@@ -31,7 +31,10 @@
     "localzet/server": "^7.0"
   },
   "suggest": {
-    "localzet/tunnel": "Required by the cross-process ChannelAdapter; use a release compatible with Server 7 when available."
+    "localzet/tunnel": "Required by the cross-process ChannelAdapter; version ^3.0 supports Localzet Server 7."
+  },
+  "require-dev": {
+    "localzet/tunnel": "^3.0"
   },
   "autoload": {
     "psr-4": {
@@ -44,7 +47,11 @@
   },
   "scripts": {
     "test": "php tests/regression.php",
-    "test:integration": "python3 tests/loopback_integration.py",
+    "test:integration": [
+      "python3 -B tests/loopback_integration.py",
+      "python3 -B tests/tunnel_client_integration.py",
+      "python3 -B tests/channel_integration.py"
+    ],
     "lint": "find . -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l"
   }
 }
