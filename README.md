@@ -19,8 +19,11 @@ This release targets Localzet Server 7.x. Server 4.x must use a compatible Socke
 ## Installation
 
 ```sh
-composer require localzet/socketio
+composer config repositories.localzet-socketio vcs https://github.com/localzet/SocketIO
+composer require localzet/socketio:dev-main
 ```
+
+The package is not published on Packagist yet; this VCS source installs the current Server 7 branch.
 
 ## Development checks
 

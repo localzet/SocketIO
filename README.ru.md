@@ -19,8 +19,11 @@
 ## Установка
 
 ```sh
-composer require localzet/socketio
+composer config repositories.localzet-socketio vcs https://github.com/localzet/SocketIO
+composer require localzet/socketio:dev-main
 ```
+
+Пакет пока не опубликован в Packagist; указанный VCS source устанавливает текущую ветку Server 7.
 
 ## Проверки разработки
 
