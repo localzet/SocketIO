@@ -35,5 +35,11 @@ $socketIo->on('connection', static function ($socket): void {
     $socket->on('crossprocess', static function (string $message) use ($socket): void {
         $socket->broadcast->emit('crossprocess-result', $message);
     });
+    $socket->on('join-room', static function (string $room) use ($socket): void {
+        $socket->join($room);
+    });
+    $socket->on('room-broadcast', static function (string $room, string $message) use ($socket): void {
+        $socket->to($room)->emit('room-result', $message);
+    });
 });
 \localzet\Server::runAll();

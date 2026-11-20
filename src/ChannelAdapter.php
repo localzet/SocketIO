@@ -91,11 +91,12 @@ class ChannelAdapter extends DefaultAdapter
             foreach ($rooms as $room) {
                 if (isset($this->rooms[$room][$id])) {
                     unset($this->rooms[$room][$id]);
-                    $channel = "socket.io#/#$room#";
-                    TunnelClient::unsubscribe($channel);
                 }
+
                 if (isset($this->rooms[$room]) && empty($this->rooms[$room])) {
                     unset($this->rooms[$room]);
+                    $channel = "socket.io#/#$room#";
+                    TunnelClient::unsubscribe($channel);
                 }
             }
         }
@@ -134,8 +135,12 @@ class ChannelAdapter extends DefaultAdapter
         $this->broadcast($packet, $opts, true);
     }
 
-    public function onTunnelMessage($msg): void
+    public function onTunnelMessage($msg, $data = null): void
     {
+        if (func_num_args() > 1) {
+            $msg = $data;
+        }
+
         $this->onChannelMessage('socket.io#/#', $msg);
     }
 

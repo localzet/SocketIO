@@ -2,6 +2,7 @@
 # Copyright © 2016-2026 Localzet Group. All rights reserved.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
+import json
 import os
 from pathlib import Path
 import signal
@@ -34,8 +35,8 @@ def start_process(script, port, runtime, *args):
     return process, output
 
 
-def wait_until_ready(process, port, runtime):
-    query = {'EIO': '3', 'transport': 'polling', 'b64': '1', 't': 'channel-integration'}
+def wait_until_ready(process, port, runtime, client_name):
+    query = {'EIO': '3', 'transport': 'polling', 'b64': '1', 't': client_name}
     endpoint = f'http://127.0.0.1:{port}/socket.io/?{urllib.parse.urlencode(query)}'
     deadline = time.monotonic() + 10
     while time.monotonic() < deadline:
@@ -57,6 +58,13 @@ def wait_until_ready(process, port, runtime):
             time.sleep(0.05)
     log = runtime / f'{port}.stdout.log'
     raise RuntimeError(f'Socket.IO process did not become ready: {log.read_text()}')
+
+
+def send_event(endpoint, event_name, *arguments):
+    event = '42' + json.dumps([event_name, *arguments], separators=(',', ':'))
+    status, body = request(endpoint, f'{len(event)}:{event}'.encode())
+    if status != 200 or body != 'ok':
+        raise RuntimeError(f'Socket.IO event POST failed: {status} {body!r}')
 
 
 def stop_process(process, output):
@@ -95,19 +103,24 @@ def main():
             first = start_process('tests/integration_server.php', first_port, runtime, 'channel', broker_port)
             second = start_process('tests/integration_server.php', second_port, runtime, 'channel', broker_port)
             processes.extend([first, second])
-            first_endpoint = wait_until_ready(first[0], first_port, runtime)
-            second_endpoint = wait_until_ready(second[0], second_port, runtime)
+            first_endpoint = wait_until_ready(first[0], first_port, runtime, 'channel-sender')
+            removed_endpoint = wait_until_ready(second[0], second_port, runtime, 'channel-removed')
+            remaining_endpoint = wait_until_ready(second[0], second_port, runtime, 'channel-remaining')
 
             time.sleep(0.5)
-            event = '42["crossprocess","payload"]'
-            status, body = request(first_endpoint, f'{len(event)}:{event}'.encode())
-            if status != 200 or body != 'ok':
-                raise RuntimeError(f'Cross-process broadcast input failed: {status} {body!r}')
+            send_event(removed_endpoint, 'join-room', 'shared-room')
+            send_event(remaining_endpoint, 'join-room', 'shared-room')
+            status, body = request(removed_endpoint, b'2:41')
+            if status != 200:
+                raise RuntimeError(f'Socket.IO disconnect input failed: {status} {body!r}')
 
-            status, payload = request(second_endpoint, timeout=15)
-            if status != 200 or decode_payload(payload) != ['42["crossprocess-result","payload"]']:
-                raise RuntimeError(f'Cross-process broadcast was not delivered: {status} {payload!r}')
-            print('Socket.IO broadcast delivery across two server processes via Tunnel passed.')
+            time.sleep(0.5)
+            send_event(first_endpoint, 'room-broadcast', 'shared-room', 'payload-after-disconnect')
+            status, payload = request(remaining_endpoint, timeout=15)
+            expected = '42["room-result","payload-after-disconnect"]'
+            if status != 200 or decode_payload(payload) != [expected]:
+                raise RuntimeError(f'Room broadcast after peer disconnect was not delivered: {status} {payload!r}')
+            print('Cross-process room broadcast remains subscribed after another local socket disconnects.')
         except Exception:
             for log in runtime.glob('*.log'):
                 lines = [line for line in log.read_text().splitlines() if any(token in line for token in ('ChannelAdapter', 'Tunnel client', 'Error', 'Fatal', 'onMessage[socket.io'))]
