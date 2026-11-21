@@ -6,7 +6,7 @@ A Socket.IO server implementation for Localzet Server.
 
 ## Status and compatibility
 
-The development branch targets Localzet Server 7. The default in-memory adapter works without Tunnel. Cross-process broadcasts use the optional Tunnel `ChannelAdapter`, compatible with Tunnel 3.x. The global `Emitter` class is included through an explicit Composer classmap. Integration tests cover Engine.IO polling, WebSocket handshakes, namespace connections, event echo and a broadcast across two Socket.IO processes through a live Tunnel broker.
+The development branch targets Localzet Server 7. The default in-memory adapter works without Tunnel. Cross-process broadcasts use the optional Tunnel `ChannelAdapter`, compatible with Tunnel 4.x. The global `Emitter` class is included through an explicit Composer classmap. Integration tests cover Engine.IO polling, WebSocket handshakes, namespace connections, event echo and a broadcast across two Socket.IO processes through a live Tunnel broker.
 
 This is a breaking release line for Server 7. Applications on Server 4 must stay on a compatible SocketIO release.
 
@@ -14,7 +14,7 @@ This is a breaking release line for Server 7. Applications on Server 4 must stay
 
 - `php`: `>=8.1`
 - `localzet/server`: `^7.0`
-- `localzet/tunnel`: optional at runtime; required for cross-process `ChannelAdapter`. Version `^3.0` targets Server 7.
+- `localzet/tunnel`: optional at runtime; required for cross-process `ChannelAdapter`. Version `^4.0` targets Server 7.
 
 ## Installation
 
