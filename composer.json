@@ -31,10 +31,10 @@
     "localzet/server": "^7.0"
   },
   "suggest": {
-    "localzet/tunnel": "Required by the cross-process ChannelAdapter; version ^3.0 supports Localzet Server 7."
+    "localzet/tunnel": "Required by the cross-process ChannelAdapter; version ^4.0 supports Localzet Server 7."
   },
   "require-dev": {
-    "localzet/tunnel": "^3.0"
+    "localzet/tunnel": "^4.0"
   },
   "autoload": {
     "psr-4": {
