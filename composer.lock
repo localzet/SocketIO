@@ -1,0 +1,169 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "8c29c0bf28567fc4f69730035037bd7c",
+    "packages": [
+        {
+            "name": "localzet/server",
+            "version": "v7.2.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/localzet/Server.git",
+                "reference": "b8fb8b00eae391eac7450e20de410505f6cda530"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/localzet/Server/zipball/b8fb8b00eae391eac7450e20de410505f6cda530",
+                "reference": "b8fb8b00eae391eac7450e20de410505f6cda530",
+                "shasum": ""
+            },
+            "require": {
+                "ext-ctype": "*",
+                "ext-json": "*",
+                "php": ">=8.1"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^2.3",
+                "revolt/event-loop": "^1.0"
+            },
+            "suggest": {
+                "ext-ev": "Native libev backend.",
+                "ext-event": "Native libevent backend.",
+                "ext-pcntl": "Multi-process supervision and hot-upgrade on Unix.",
+                "ext-posix": "Unix process, signal and privilege management.",
+                "ext-redis": "Redis-backed HTTP sessions.",
+                "ext-sockets": "Socket tuning and zero-downtime hot-upgrade descriptor passing.",
+                "ext-swoole": "Optional native Swoole coroutine event backend.",
+                "ext-swow": "Optional native Swow coroutine event backend.",
+                "localzet/events": "Optional Localzet lifecycle event bus integration.",
+                "mongodb/mongodb": "MongoDB-backed HTTP sessions.",
+                "revolt/event-loop": "Fiber-based event loop backend and non-blocking Timer::sleep()."
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "7.2.x-dev"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "Helpers.php"
+                ],
+                "psr-4": {
+                    "localzet\\": "",
+                    "localzet\\Server\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "AGPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Ivan Zorin",
+                    "email": "creator@localzet.com",
+                    "homepage": "https://github.com/localzet",
+                    "role": "Developer"
+                }
+            ],
+            "description": "High-performance asynchronous event-driven server for PHP.",
+            "keywords": [
+                "asynchronous",
+                "event-loop",
+                "http",
+                "server",
+                "tcp",
+                "udp",
+                "websocket"
+            ],
+            "support": {
+                "docs": "https://server.localzet.com",
+                "email": "support@localzet.com",
+                "issues": "https://github.com/localzet/Server/issues",
+                "source": "https://github.com/localzet/Server"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/localzet",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-11-22T19:18:30+00:00"
+        }
+    ],
+    "packages-dev": [
+        {
+            "name": "localzet/tunnel",
+            "version": "v4.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/localzet/Tunnel.git",
+                "reference": "9383918bd359619f79cd76493d42dd10258da79e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/localzet/Tunnel/zipball/9383918bd359619f79cd76493d42dd10258da79e",
+                "reference": "9383918bd359619f79cd76493d42dd10258da79e",
+                "shasum": ""
+            },
+            "require": {
+                "localzet/server": "^7.0",
+                "php": ">=8.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "localzet\\Tunnel\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "AGPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Ivan Zorin",
+                    "email": "creator@localzet.com",
+                    "homepage": "https://github.com/localzet",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A client/server messaging channel for Localzet Server processes.",
+            "keywords": [
+                "AGPL",
+                "communication",
+                "cross-server",
+                "library",
+                "localzet",
+                "php",
+                "server",
+                "tunnel"
+            ],
+            "support": {
+                "email": "support@localzet.com",
+                "issues": "https://github.com/localzet/Tunnel/issues",
+                "source": "https://github.com/localzet/Tunnel"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/localzet",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-11-21T01:50:02+00:00"
+        }
+    ],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {},
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {
+        "php": ">=8.1"
+    },
+    "platform-dev": {},
+    "plugin-api-version": "2.9.0"
+}
